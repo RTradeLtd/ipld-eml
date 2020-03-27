@@ -22,7 +22,7 @@ func TestConverter(t *testing.T) {
 		t.Fatal(err)
 	}
 	converter := NewConverter(ctx, cl)
-	var files = []string{"./samples/sample1.eml", "./samples/sample2.eml", "./samples/sample3.eml", "./samples/sample4.eml", "./samples/sample5.eml"}
+	var files = []string{"./samples/sample1.eml", "./samples/sample2.eml", "./samples/sample3.eml", "./samples/sample4.eml", "./samples/sample5.eml", "./samples/sample6.eml", "./samples/sample7.eml"}
 	for _, file := range files {
 		func() {
 			fh, err := os.Open(file)
