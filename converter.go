@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"time"
 
 	"github.com/DusanKasan/parsemail"
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
@@ -94,7 +93,11 @@ func (c *Converter) Convert(reader io.Reader) (string, error) {
 	email.InReplyTo = eml.InReplyTo
 	email.References = eml.References
 	var resent = &pb.Resent{
-		ResentFrom: make([]*pb.Address, len(eml.ResentFrom)),
+		ResentFrom:      make([]*pb.Address, len(eml.ResentFrom)),
+		ResentTo:        make([]*pb.Address, len(eml.ResentTo)),
+		ResentCc:        make([]*pb.Address, len(eml.ResentCc)),
+		ResentBcc:       make([]*pb.Address, len(eml.ResentBcc)),
+		ResentMessageId: eml.ResentMessageID,
 	}
 	for i, v := range eml.ResentFrom {
 		resent.ResentFrom[i] = &pb.Address{
@@ -108,20 +111,25 @@ func (c *Converter) Convert(reader io.Reader) (string, error) {
 			Address: eml.ResentSender.Address,
 		}
 	}
-	if eml.ResentTo != nil {
-		// TODO(bonedaddy): needs to be an array
+	for i, v := range eml.ResentTo {
+		resent.ResentTo[i] = &pb.Address{
+			Name:    v.Name,
+			Address: v.Address,
+		}
 	}
-	nullTime := time.Time{}
-	if eml.ResentDate != nullTime {
-		resent.ResentDate = eml.ResentDate
+	resent.ResentDate = eml.ResentDate
+	for i, v := range eml.ResentCc {
+		resent.ResentCc[i] = &pb.Address{
+			Name:    v.Name,
+			Address: v.Address,
+		}
 	}
-	if eml.ResentCc != nil {
-		// TODO(bonedaddy): needs to be an array
+	for i, v := range eml.ResentBcc {
+		resent.ResentBcc[i] = &pb.Address{
+			Name:    v.Name,
+			Address: v.Address,
+		}
 	}
-	if eml.ResentBcc != nil {
-		// TODO(bonedaddy): needs to be an array
-	}
-	resent.ResentMessageId = eml.ResentMessageID
 	email.Resent = resent
 	email.HtmlBody = eml.HTMLBody
 	email.TextBody = eml.TextBody

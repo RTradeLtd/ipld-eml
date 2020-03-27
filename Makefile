@@ -35,3 +35,14 @@ verifiers: staticcheck
 staticcheck:
 	@echo "Running $@ check"
 	@GO111MODULE=on ${GOPATH}/bin/staticcheck ./...
+
+
+gen:
+	protoc \
+        -I=pb \
+        -I=${GOPATH}/src \
+        -I=${GOPATH}/src/github.com/gogo/protobuf/protobuf \
+        -I=${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+		pb/email.proto \
+        --gogofaster_out=plugins=grpc:pb
+	sed -i '/_ \"google\/protobuf\"/d' pb/email.pb.go

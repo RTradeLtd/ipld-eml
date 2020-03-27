@@ -51,10 +51,10 @@ message Addresses {
 message Resent {
 	repeated Address resentFrom = 1;
 	Address resentSender = 2;
-	Address  resentTo = 3;
+	repeated Address  resentTo = 3;
 	google.protobuf.Timestamp resentDate = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-	Address resentCc = 5;
-	Address resentBcc = 6;
+	repeated Address resentCc = 5;
+	repeated Address resentBcc = 6;
 	string resentMessageId = 7;
 }
 message Header {
