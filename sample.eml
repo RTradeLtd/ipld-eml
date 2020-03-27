@@ -1,0 +1,207 @@
+Delivered-To: alext@rtradetechnologies.com
+Received: by 2002:ac0:8c2a:0:0:0:0:0 with SMTP id p39csp1702340ima;
+        Sun, 15 Mar 2020 06:41:35 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vs7RXA7Y/dslaIqRWuTgxUcgvl5SaWLz3+WGe+undkGie7/BnxBjwj124DOd14J7Xyj+q6j
+X-Received: by 2002:a37:9684:: with SMTP id y126mr21856250qkd.151.1584279694887;
+        Sun, 15 Mar 2020 06:41:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1584279694; cv=none;
+        d=google.com; s=arc-20160816;
+        b=smEnsGa4o3cqEaUi7XaxSkYCx+PbbqM33nSvIZjmyeLtyFaXxwyh6CrLqNwA0NDJ+N
+         Y2CjL7bkUImKc/W50/96OG0U0DysafvwuBLo7iUewbuvuAWOnqnqSknWLjGK/dnUnmbe
+         OjTfMJbTMwwhsFZPIH4k1hBGjK79LSqyJCcLu4eUSC680uGQojL5wtzG2pdaFphto3a0
+         HYgtTmINAu2tdXF0B/wNKIipisn/+1ypRkjx0sPmHJksIQOcYPF8bSJ8YiUsKJg5KB+7
+         DlvepFGgW+ZW04T5xJOZeOkLSLZdsk/8UN9sAYSv978P3RI9AEmtTHUlTCD/pStTXLAg
+         ABjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:date:message-id:mime-version:subject:to:from
+         :dkim-signature:dkim-signature;
+        bh=5k3Qi0XYUFphayLNvKZnS8PlbBppEUfDhHrG3x7xmlg=;
+        b=UKmiFCViO22cu312m/oScAD+Kxod4QGxG6MBirVT+Gj0ncOXlLEWdOO1xfR1YvC2mc
+         IdzbmmCYwUO8N4TpJYJi0HiTXhyihDt+5z5WH/uz9BxiaWdMmQzWXMzDDGAJN34lxUqi
+         J0qHnYbPP4LgG4HHqI/+DtvnhYP8Wp9BAxk4uIzjcyy4TISvYuf2Oqn7gogXIt17vZu3
+         gqXIBBvGgGt9aSQeQhuBl7pIVKpf6TALMGOqzEksJErlyrzlg+fN2Sl1gzd4Jn8n4/UC
+         2XPnY6HwBlzSOe6+vuZzxs9F9DatYUSy6ajkFBsfBTA28ZaYVbsxZNK01igqUxdM+dQP
+         MWpQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@keybase.io header.s=n5rjwaw2fyser45bgqopraalui4l22tw header.b=Dng7+luV;
+       dkim=pass header.i=@amazonses.com header.s=224i4yxa5dv7c2xz3womw6peuasteono header.b=HVLqDbY+;
+       spf=pass (google.com: domain of 01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com designates 54.240.9.12 as permitted sender) smtp.mailfrom=01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com
+Return-Path: <01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com>
+Received: from a9-12.smtp-out.amazonses.com (a9-12.smtp-out.amazonses.com. [54.240.9.12])
+        by mx.google.com with ESMTPS id m7si4357055qvz.16.2020.03.15.06.41.34
+        for <alext@rtradetechnologies.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 15 Mar 2020 06:41:34 -0700 (PDT)
+Received-SPF: pass (google.com: domain of 01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com designates 54.240.9.12 as permitted sender) client-ip=54.240.9.12;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@keybase.io header.s=n5rjwaw2fyser45bgqopraalui4l22tw header.b=Dng7+luV;
+       dkim=pass header.i=@amazonses.com header.s=224i4yxa5dv7c2xz3womw6peuasteono header.b=HVLqDbY+;
+       spf=pass (google.com: domain of 01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com designates 54.240.9.12 as permitted sender) smtp.mailfrom=01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=n5rjwaw2fyser45bgqopraalui4l22tw; d=keybase.io; t=1584279694;
+	h=From:To:Subject:MIME-Version:Content-Type:Message-ID:Date;
+	bh=owgdQ+aRfNyU3xug3l21K0iS1oQYf0V8mBIUChR0mRc=;
+	b=Dng7+luVaGsmErYHfuL9WbaLMzS/zzPrFDS4cu8BjHQr9uuSDN502Vhto+WZ0wlZ
+	E/z48QNntZm5wRv7MTnFLVWKjnobJPMANTwgO39kYDKw4mNPZSlXgpzlTVkVPnNrCC7
+	ceTUFtTwyng0lpLgQyClUM9biArFlRDt5iRX22yo=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1584279694;
+	h=From:To:Subject:MIME-Version:Content-Type:Message-ID:Date:Feedback-ID;
+	bh=owgdQ+aRfNyU3xug3l21K0iS1oQYf0V8mBIUChR0mRc=;
+	b=HVLqDbY+UUIKO0VC8DTEwnemviHJsmhN6sVeFGlCkUwD1A4e3xS7rdKifYO/sXtL
+	T79lEjYSv2rkxDYkOt8EhNNXMtLCMy3q3Y63QlPsq5Ed9Su/kGDZL6umLDd8axwj+Fd
+	hR1BOLtKsMfzS24iGW3HMK3Sb0WQW8gZlDP0eIUI=
+From: Keybase <notify@keybase.io>
+To: alext@rtradetechnologies.com
+Subject: your twitter (@shitbone127) proof just broke
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_3232903_572581240.1584279693914"
+Message-ID: <01000170de6daa58-70b664d1-4276-4c08-a762-9d3aaed37b3c-000000@email.amazonses.com>
+Date: Sun, 15 Mar 2020 13:41:34 +0000
+X-SES-Outgoing: 2020.03.15-54.240.9.12
+Feedback-ID: 1.us-east-1.35Qs6oTJqJlRBp8zjxXYfyo2dyykpOoKW188Wk5KQ30=:AmazonSES
+
+------=_Part_3232903_572581240.1584279693914
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+
+Uh-oh, postables,
+your previously-proven twitter identity @shitbone127 just broke. We've been checking it repeatedly,
+and it's not working from our perspective.
+
+If you deleted a public proof, remember that proofs *must* stay public so anyone can trust you without
+trusting the Keybase.io server.
+
+If your identity has changed, you should revoke or replace the proof with the Keybase app.
+
+https://keybase.io/
+
+Thanks! -Keybase
+
+--------------------
+Keybase for Android: https://keybase.io/_/download/keybase-for-android
+Keybase for iPhone:  https://keybase.io/_/download/keybase-for-ios
+Keybase for Linux:   https://keybase.io/docs/the_app/install_linux
+Keybase for Windows: https://keybase.io/docs/the_app/install_windows
+Keybase for macOS:   https://keybase.io/docs/the_app/install_macos
+--------------------
+
+Mail settings:  http://google.ca
+
+------=_Part_3232903_572581240.1584279693914
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www=
+.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8=
+" />
+  </head>
+  <body>
+    <div style=3D"max-width:700px;margin-top:35px;margin-left:0%;margin-rig=
+ht:0%;font-size:1.1em;line-height:1.4em;">
+      <div style=3D"margin-top:0px;">
+       =20
+
+
+    <p style=3D"margin-bottom:30px">
+      Uh-oh, <a href=3D"https://keybase.io/postables?a=3DlgGS2SA1MGJlZTg4OW=
+MyY2VkNTgwMjI5NzM5YTI0MTk3ZWQxObxhbGV4dEBydHJhZGV0ZWNobm9sb2dpZXMuY29tzl5uM=
+I3OAAP0gMDEIFR8L8i0aSe6VS6KBmnCJmrPGxvLThU0BOPslEZ%2FIm6x" style=3D"color:r=
+gb(76,142,255);text-decoration:none">postables</a>,
+      your previously-proven twitter identity <b>@shitbone127</b> just brok=
+e. We've been checking it repeatedly,
+      and it's not working from our perspective.
+    </p>
+    <p style=3D"margin-bottom:30px">
+      If you deleted a public proof, remember that proofs <i>must</i> stay =
+public so anyone can trust you without
+      trusting the Keybase.io server.
+    </p>
+    <p style=3D"margin-bottom:30px">
+      Here are your options: you can (a) revoke the proof, (b) replace it, =
+or (c) ask
+      us to keep trying. All this can be done from the Keybase app or websi=
+te.
+    </p>
+ =20
+
+<p style=3D"margin-bottom:30px">
+  Thanks! -Keybase
+</p>
+
+      </div>
+
+     =20
+
+      <div style=3D"border-top:1px solid #ddd;padding-top:20px;margin:40px =
+0 25px;">
+        <center><h3 style=3D"">Download Keybase:</h3></center>
+        <div style=3D"padding:10px;text-align:center;color:#7f7f7f;">
+          <a style=3D"color:rgb(76,142,255);text-decoration:none" href=3D"h=
+ttps://keybase.io/docs/the_app/install_macos">macOS</a> =E2=80=A2
+          <a style=3D"color:rgb(76,142,255);text-decoration:none" href=3D"h=
+ttps://keybase.io/docs/the_app/install_windows">Windows</a> =E2=80=A2
+          <a style=3D"color:rgb(76,142,255);text-decoration:none" href=3D"h=
+ttps://keybase.io/docs/the_app/install_linux">Linux</a>
+        </div>
+        <div style=3D"padding:10px;text-align:center;color:#7f7f7f;">
+          <a style=3D"display:inline-block;border:0px solid black;text-alig=
+n:center;color:rgb(76,142,255);" href=3D"https://keybase.io/_/download/keyb=
+ase-for-ios"
+            ><img
+              style=3D";"
+              src=3D"https://keybase.io/images/email/link-badge-appstore_2x=
+.png"
+              width=3D"136"
+              height=3D"40"
+              alt=3D"Install iOS"
+            /></a>
+          <a style=3D"display:inline-block;border:0px solid black;text-alig=
+n:center;color:rgb(76,142,255);" href=3D"https://keybase.io/_/download/keyb=
+ase-for-android"
+            ><img
+              style=3D";"
+              src=3D"https://keybase.io/images/email/link-badge-playstore_2=
+x.png"
+              width=3D"136"
+              height=3D"40"
+              alt=3D"Install Android"
+            /></a>
+        </div>
+
+        <div style=3D"padding:10px;text-align:center;color:#7f7f7f;">
+          <a style=3D"color:rgb(76,142,255);text-decoration:none" href=3D"h=
+ttps://keybase.io/_/download/keybase-for-ios">iOS</a> =E2=80=A2
+          <a style=3D"color:rgb(76,142,255);text-decoration:none" href=3D"h=
+ttps://keybase.io/_/download/keybase-for-android">Android</a>
+        </div>
+      </div>
+
+     =20
+      <div style=3D"font-size:0.8em;line-height:1.4em;text-align:center;mar=
+gin-top:10px;padding-top:10px;border-top:1px solid #ddd;color:#7f7f7f;">
+        <div style=3D"margin-top:20px;margin-bottom:10px;text-align:center;=
+">
+          <a href=3D"https://keybase.io/"><img src=3D"https://keybase.io/im=
+ages/icons/icon-keybase-logo-64@2x.png" style=3D"margin-bottom:5px;" width=
+=3D"64" height=3D"64" /></a><br />
+          <a style=3D"color:rgb(76,142,255);text-decoration:none;" href=3D"=
+https://keybase.io/">Keybase.io</a>
+        </div>
+        85 Broad St., 28th Floor<br/>
+        New York, NY 10004<br /><br />
+        <a style=3D"color:rgb(76,142,255);text-decoration:none;" href=3D"ht=
+tps://keybase.io/">Manage your e-mail =
+settings</a>
+      </div>
+     =20
+    </div>
+  </body>
+</html>
+
+------=_Part_3232903_572581240.1584279693914--

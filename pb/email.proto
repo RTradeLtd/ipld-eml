@@ -1,0 +1,76 @@
+syntax = "proto3";
+package pb;
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+
+
+// Email is an ERFC5322 compatible protocol buffer intended to be used
+// as an IPLD object type, allowing long-term space-efficient archiving of data
+// taken from https://github.com/DusanKasan/parsemail/blob/master/parsemail.go
+message Email {
+    Header headers = 1 [(gogoproto.nullable) = false];
+    string subject = 2;
+	Addresses addresses = 3 [(gogoproto.nullable) = false];
+	google.protobuf.Timestamp date = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+	string messageID = 5;
+	repeated string inReplyTo = 6;
+	repeated string references = 7;
+	Resent resent = 8;
+	string htmlBody = 10;
+	string textBody = 11;
+	// a slice is nil by default
+	repeated Attachment attachments = 12 [(gogoproto.nullable) = false];
+	// a slice is nil by default
+	repeated EmbeddedFile embeddedFiles = 13 [(gogoproto.nullable) = false];
+}
+
+message Attachment { 
+	string fileName = 1;
+	string contentType = 2;
+	// hash of the unixfs object for the file
+	string dataHash = 3; 
+}
+
+message EmbeddedFile {
+	string contentId = 1;
+	string contentType = 2;
+	// hash of the unixfs object for the file
+	string dataHash = 3; 
+}
+
+message Addresses {
+	Address sender = 1;
+    repeated Address from = 2;
+    repeated Address replyTo = 3;
+    repeated Address to = 4;
+    repeated Address cc = 5;
+    repeated Address bcc = 6;
+}
+
+message Resent {
+	repeated Address resentFrom = 1;
+	Address resentSender = 2;
+	Address  resentTo = 3;
+	google.protobuf.Timestamp resentDate = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+	Address resentCc = 5;
+	Address resentBcc = 6;
+	string resentMessageId = 7;
+}
+message Header {
+    map<string, Headers> values = 1;
+}
+
+message Headers {
+	repeated string values = 1;
+}
+
+// Values is basically an embedded slice in an email header
+message Values {
+    repeated string v = 1;
+}
+
+message Address {
+    string name = 1; // proper name, may be empty
+    string address = 2;
+}
