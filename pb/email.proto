@@ -54,7 +54,7 @@ message Resent {
 	string resentMessageId = 3;
 }
 message Header {
-    map<string, Headers> values = 1;
+    map<string, Headers> values = 1 [(gogoproto.nullable) = false];
 }
 
 message Headers {

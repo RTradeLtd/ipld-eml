@@ -40,6 +40,9 @@ func (c *Converter) GetEmail(hash string) (*pb.Email, error) {
 	}
 	// normalize time values
 	email.Date = email.Date.UTC()
+	if email.Resent != nil {
+		email.Resent.ResentDate = email.Resent.ResentDate.UTC()
+	}
 	return email, nil
 }
 
@@ -64,14 +67,19 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 	}
 	email := &pb.Email{
 		Headers: pb.Header{
-			Values: make(map[string]*pb.Headers, len(eml.Header)),
+			Values: make(map[string]pb.Headers, len(eml.Header)),
 		},
 		Attachments:   make([]pb.Attachment, len(eml.Attachments)),
 		EmbeddedFiles: make([]pb.EmbeddedFile, len(eml.EmbeddedFiles)),
+		// normalize time value
+		Date:       eml.Date.UTC(),
+		MessageID:  eml.MessageID,
+		InReplyTo:  eml.InReplyTo,
+		References: eml.References,
 	}
 	// set header
 	for k, v := range eml.Header {
-		email.Headers.Values[k] = &pb.Headers{Values: v}
+		email.Headers.Values[k] = pb.Headers{Values: v}
 	}
 	// set subject
 	email.Subject = eml.Subject
@@ -120,10 +128,6 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 		}
 	}
 	email.Addresses = addrs
-	email.Date = eml.Date.UTC()
-	email.MessageID = eml.MessageID
-	email.InReplyTo = eml.InReplyTo
-	email.References = eml.References
 	// only set this if we have 1 or more non-nil fields
 	if eml.ResentFrom != nil || eml.ResentTo != nil || eml.ResentCc != nil || eml.ResentBcc != nil {
 		var resent = &pb.Resent{
@@ -134,7 +138,8 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 				Bcc:  make([]pb.Address, len(eml.ResentBcc)),
 			},
 			ResentMessageId: eml.ResentMessageID,
-			ResentDate:      eml.ResentDate.UTC(),
+			// normalize time value
+			ResentDate: eml.ResentDate.UTC(),
 		}
 		for i, v := range eml.ResentFrom {
 			resent.Addresses.From[i] = pb.Address{
