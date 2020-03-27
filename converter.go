@@ -124,45 +124,50 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 	email.MessageID = eml.MessageID
 	email.InReplyTo = eml.InReplyTo
 	email.References = eml.References
-	var resent = &pb.Resent{
-		ResentFrom:      make([]pb.Address, len(eml.ResentFrom)),
-		ResentTo:        make([]pb.Address, len(eml.ResentTo)),
-		ResentCc:        make([]pb.Address, len(eml.ResentCc)),
-		ResentBcc:       make([]pb.Address, len(eml.ResentBcc)),
-		ResentMessageId: eml.ResentMessageID,
-	}
-	for i, v := range eml.ResentFrom {
-		resent.ResentFrom[i] = pb.Address{
-			Name:    v.Name,
-			Address: v.Address,
+	// only set this if we have 1 or more non-nil fields
+	if eml.ResentFrom != nil || eml.ResentTo != nil || eml.ResentCc != nil || eml.ResentBcc != nil {
+		var resent = &pb.Resent{
+			Addresses: pb.Addresses{
+				From: make([]pb.Address, len(eml.ResentFrom)),
+				To:   make([]pb.Address, len(eml.ResentTo)),
+				Cc:   make([]pb.Address, len(eml.ResentCc)),
+				Bcc:  make([]pb.Address, len(eml.ResentBcc)),
+			},
+			ResentMessageId: eml.ResentMessageID,
+			ResentDate:      eml.ResentDate.UTC(),
 		}
-	}
-	if eml.ResentSender != nil {
-		resent.ResentSender = &pb.Address{
-			Name:    eml.ResentSender.Name,
-			Address: eml.ResentSender.Address,
+		for i, v := range eml.ResentFrom {
+			resent.Addresses.From[i] = pb.Address{
+				Name:    v.Name,
+				Address: v.Address,
+			}
 		}
-	}
-	for i, v := range eml.ResentTo {
-		resent.ResentTo[i] = pb.Address{
-			Name:    v.Name,
-			Address: v.Address,
+		if eml.ResentSender != nil {
+			resent.Addresses.Sender = &pb.Address{
+				Name:    eml.ResentSender.Name,
+				Address: eml.ResentSender.Address,
+			}
 		}
-	}
-	resent.ResentDate = eml.ResentDate
-	for i, v := range eml.ResentCc {
-		resent.ResentCc[i] = pb.Address{
-			Name:    v.Name,
-			Address: v.Address,
+		for i, v := range eml.ResentTo {
+			resent.Addresses.To[i] = pb.Address{
+				Name:    v.Name,
+				Address: v.Address,
+			}
 		}
-	}
-	for i, v := range eml.ResentBcc {
-		resent.ResentBcc[i] = pb.Address{
-			Name:    v.Name,
-			Address: v.Address,
+		for i, v := range eml.ResentCc {
+			resent.Addresses.Cc[i] = pb.Address{
+				Name:    v.Name,
+				Address: v.Address,
+			}
 		}
+		for i, v := range eml.ResentBcc {
+			resent.Addresses.Bcc[i] = pb.Address{
+				Name:    v.Name,
+				Address: v.Address,
+			}
+		}
+		email.Resent = resent
 	}
-	email.Resent = resent
 	email.HtmlBody = eml.HTMLBody
 	email.TextBody = eml.TextBody
 	for i, attach := range eml.Attachments {

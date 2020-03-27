@@ -49,13 +49,9 @@ message Addresses {
 }
 
 message Resent {
-	repeated Address resentFrom = 1 [(gogoproto.nullable) = false];
-	Address resentSender = 2;
-	repeated Address  resentTo = 3 [(gogoproto.nullable) = false];
-	google.protobuf.Timestamp resentDate = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-	repeated Address resentCc = 5 [(gogoproto.nullable) = false];
-	repeated Address resentBcc = 6 [(gogoproto.nullable) = false];
-	string resentMessageId = 7;
+	Addresses addresses = 1 [(gogoproto.nullable) = false];
+	google.protobuf.Timestamp resentDate = 2 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+	string resentMessageId = 3;
 }
 message Header {
     map<string, Headers> values = 1;
