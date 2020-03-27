@@ -1,12 +1,14 @@
 package ipldeml
 
 import (
+	"bytes"
 	"context"
-	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
+	"github.com/gogo/protobuf/proto"
 )
 
 func TestConverter(t *testing.T) {
@@ -24,9 +26,23 @@ func TestConverter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	hash, err := converter.Convert(fh)
+	data, err := ioutil.ReadAll(fh)
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println("hash: ", hash)
+	email1, err := converter.Convert(bytes.NewReader(append(data[0:0:0], data...)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	hash, err := converter.PutEmail(email1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	email2, err := converter.GetEmail(hash)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !proto.Equal(email1, email2) {
+		t.Fatal("not equal")
+	}
 }

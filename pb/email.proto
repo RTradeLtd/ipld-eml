@@ -41,20 +41,20 @@ message EmbeddedFile {
 
 message Addresses {
 	Address sender = 1;
-    repeated Address from = 2;
-    repeated Address replyTo = 3;
-    repeated Address to = 4;
-    repeated Address cc = 5;
-    repeated Address bcc = 6;
+    repeated Address from = 2 [(gogoproto.nullable) = false];
+    repeated Address replyTo = 3 [(gogoproto.nullable) = false];
+    repeated Address to = 4 [(gogoproto.nullable) = false];
+    repeated Address cc = 5 [(gogoproto.nullable) = false];
+    repeated Address bcc = 6 [(gogoproto.nullable) = false];
 }
 
 message Resent {
-	repeated Address resentFrom = 1;
+	repeated Address resentFrom = 1 [(gogoproto.nullable) = false];
 	Address resentSender = 2;
-	repeated Address  resentTo = 3;
+	repeated Address  resentTo = 3 [(gogoproto.nullable) = false];
 	google.protobuf.Timestamp resentDate = 4 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
-	repeated Address resentCc = 5;
-	repeated Address resentBcc = 6;
+	repeated Address resentCc = 5 [(gogoproto.nullable) = false];
+	repeated Address resentBcc = 6 [(gogoproto.nullable) = false];
 	string resentMessageId = 7;
 }
 message Header {
