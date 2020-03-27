@@ -3,6 +3,7 @@ package ipldeml
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 
 	"github.com/DusanKasan/parsemail"
@@ -53,6 +54,85 @@ func (c *Converter) PutEmail(email *pb.Email) (string, error) {
 		return "", err
 	}
 	resp, err := c.xclient.UploadFile(c.ctx, bytes.NewReader(data), 0, nil, false)
+	if err != nil {
+		return "", err
+	}
+	return resp.GetHash(), nil
+}
+
+// GetEmailChunked is used to return an email from its chunked storage format
+func (c *Converter) GetEmailChunked(hash string) (*pb.Email, error) {
+	resp, err := c.xclient.DownloadFile(c.ctx, &xpb.DownloadRequest{Hash: hash}, false)
+	if err != nil {
+		return nil, err
+	}
+	ep := new(pb.ChunkedEmail)
+	if err := ep.Unmarshal(resp.Bytes()); err != nil {
+		return nil, err
+	}
+	var (
+		data []byte
+		max  = len(ep.Parts)
+	)
+	for i := 0; i < max; i++ {
+		resp, err := c.xclient.Dag(c.ctx, &xpb.DagRequest{
+			RequestType: xpb.DAGREQTYPE_DAG_GET,
+			Hash:        ep.Parts[int32(i)],
+		})
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, resp.GetRawData()...)
+	}
+	email := new(pb.Email)
+	if err := email.Unmarshal(data); err != nil {
+		return nil, err
+	}
+	return email, nil
+}
+
+// PutEmailChunked allows storing an email as a custom ipld dag object
+// as opposed to a unixfs object type
+func (c *Converter) PutEmailChunked(email *pb.Email) (string, error) {
+	data, err := email.Marshal()
+	if err != nil {
+		return "", err
+	}
+	var dataSize = len(data)
+	maxSize := (1024 * 1024 * 1024) - 1024
+	if len(data) >= maxSize {
+		return "", errors.New("do normal uplaod")
+	}
+	var (
+		parts     = make(map[int32]string)
+		lastChunk = 0
+		partcount = int32(0)
+	)
+	for {
+		if lastChunk >= dataSize {
+			break
+		}
+		barrier := lastChunk + maxSize
+		if barrier > dataSize {
+			barrier = dataSize
+		}
+		resp, err := c.xclient.Dag(c.ctx, &xpb.DagRequest{
+			Data: data[lastChunk:barrier],
+		})
+		if err != nil {
+			return "", err
+		}
+		lastChunk = barrier
+		parts[partcount] = resp.GetHashes()[0]
+	}
+	ep := &pb.ChunkedEmail{
+		Parts: parts,
+	}
+	epd, err := ep.Marshal()
+	if err != nil {
+		return "", err
+	}
+	resp, err := c.xclient.UploadFile(c.ctx, bytes.NewReader(epd), 0, nil, false)
 	if err != nil {
 		return "", err
 	}

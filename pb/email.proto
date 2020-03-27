@@ -3,7 +3,11 @@ package pb;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-
+// ChunkedEmail is like Email but chunked into parts
+message ChunkedEmail {
+	// maps the chunk part to its hash
+	map<int32, string> parts = 1;
+}
 
 // Email is an ERFC5322 compatible protocol buffer intended to be used
 // as an IPLD object type, allowing long-term space-efficient archiving of data

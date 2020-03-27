@@ -1,9 +1,11 @@
 # ipld-eml
 
-This repository is a utility to enable taking `eml` files (a common format for storing email messages), and turns them into IPLD objects. It uses `parsemail` to read the eml file, and turn it into a protocol buffer object, with attachments and embeded files stored separately as a unixfs object. The protocol buffer object is then marshalled and stored as a unixfs object as well, to take advantage of its chunking functionalities.
+`ipld-eml` is an RFC-5322 compliant IPLD email object format. It allows taking emails and storing them as typed objects on IPFS.  Emails are converted into a protocol buffer object before being stored on IPFS. Currently there are two methods of storing on IPFS, as a UnixFS object, or as a dedicated IPLD object.
 
-Supports `RFC-5322`.
+## unixfs
 
-# overview
+The workflow for unixfs is similar to the dedicated IPLD object, except we take the protocol buffer object, marshal it, and store it as a unixfs object
 
-One of the really cool things about this is that there is massive savings when it comes to storing multiple emails. For example both `sample2.eml`  and `sample3.eml` reference the same jpeg file. With traditional systems, and as the emails are stored on disk in the eml files, the jpeg image is stored twice. By putting this on IPFS, due to the way we treat embedded files and attachments, we only have to pay the storage cost once.
+## dedicated ipld object
+
+The workflow for this involves manually chunking the email protocol buffer object into chunks of slightly under 1MB in size. These chunks are then recorded in a wrapper object, which is then stored as a unixfs object. Because individual DAG objects can't be larger than 1MB in size, otherwise they will be unable to be transferred through the network, it is possible that storing the email chunk wrapper object will be larger than 1MB in size. As such, the unixfs object type allows us to conveniently not have to deal with the maximum size of the wrapper object.

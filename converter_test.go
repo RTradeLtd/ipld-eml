@@ -49,6 +49,22 @@ func TestConverter(t *testing.T) {
 			if !proto.Equal(email1, email2) {
 				t.Fatal("not equal")
 			}
+			email2Copy, err := converter.GetEmail(hash)
+			if err != nil {
+				t.Fatal(err)
+			}
+			chunkHash, err := converter.PutEmailChunked(email2)
+			if err != nil {
+				t.Fatal(err)
+			}
+			email3, err := converter.GetEmailChunked(chunkHash)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !proto.Equal(email2Copy, email3) {
+				t.Fatal("invalid email")
+			}
 		}()
 	}
+
 }
