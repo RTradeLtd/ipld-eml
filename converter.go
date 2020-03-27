@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"time"
 
 	"github.com/DusanKasan/parsemail"
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
@@ -92,7 +93,36 @@ func (c *Converter) Convert(reader io.Reader) (string, error) {
 	email.MessageID = eml.MessageID
 	email.InReplyTo = eml.InReplyTo
 	email.References = eml.References
-	// TODO(bonedaddy): add "resent"
+	var resent = &pb.Resent{
+		ResentFrom: make([]*pb.Address, len(eml.ResentFrom)),
+	}
+	for i, v := range eml.ResentFrom {
+		resent.ResentFrom[i] = &pb.Address{
+			Name:    v.Name,
+			Address: v.Address,
+		}
+	}
+	if eml.ResentSender != nil {
+		resent.ResentSender = &pb.Address{
+			Name:    eml.ResentSender.Name,
+			Address: eml.ResentSender.Address,
+		}
+	}
+	if eml.ResentTo != nil {
+		// TODO(bonedaddy): needs to be an array
+	}
+	nullTime := time.Time{}
+	if eml.ResentDate != nullTime {
+		resent.ResentDate = eml.ResentDate
+	}
+	if eml.ResentCc != nil {
+		// TODO(bonedaddy): needs to be an array
+	}
+	if eml.ResentBcc != nil {
+		// TODO(bonedaddy): needs to be an array
+	}
+	resent.ResentMessageId = eml.ResentMessageID
+	email.Resent = resent
 	email.HtmlBody = eml.HTMLBody
 	email.TextBody = eml.TextBody
 	for i, attach := range eml.Attachments {
