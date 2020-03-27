@@ -61,6 +61,7 @@ func TestConverter(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			// tests equality between dedicated ipld format, and unixfs format
 			if !proto.Equal(email2Copy, email3) {
 				t.Fatal("invalid email")
 			}
