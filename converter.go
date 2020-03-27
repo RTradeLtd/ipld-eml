@@ -106,9 +106,8 @@ func (c *Converter) PutEmailChunked(email *pb.Email) (string, error) {
 	var (
 		parts     = make(map[int32]string)
 		lastChunk = 0
-		partcount = int32(0)
 	)
-	for {
+	for i := 0; ; i++ {
 		if lastChunk >= dataSize {
 			break
 		}
@@ -123,7 +122,7 @@ func (c *Converter) PutEmailChunked(email *pb.Email) (string, error) {
 			return "", err
 		}
 		lastChunk = barrier
-		parts[partcount] = resp.GetHashes()[0]
+		parts[int32(i)] = resp.GetHashes()[0]
 	}
 	ep := &pb.ChunkedEmail{
 		Parts: parts,
