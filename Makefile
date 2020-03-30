@@ -1,3 +1,7 @@
+.PHONY: cli
+cli:
+	go build -o eml-util ./cmd/eml-util
+	
 # cleanup dependencies and download missing ones
 .PHONY: deps
 deps:

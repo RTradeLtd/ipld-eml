@@ -1,8 +1,11 @@
 package analysis
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/brianvoe/gofakeit/v4"
@@ -22,6 +25,25 @@ func init() {
 	}
 	// seed with a constant value so we can generate the same fake data each time
 	gofakeit.Seed(0)
+}
+
+// WritePartsToDisk stores all emails on disk in mime format
+func WritePartsToDisk(parts []*enmime.Part, outdir string) error {
+	if err := os.Mkdir(outdir, os.ModeDir); !os.IsExist(err) {
+		return err
+	}
+	for i, part := range parts {
+		buf := bytes.NewBuffer(nil)
+		if err := part.Encode(buf); err != nil {
+			return err
+		}
+		ioutil.WriteFile(
+			fmt.Sprintf("%s/email-%v.eml", outdir, i),
+			buf.Bytes(),
+			os.FileMode(0642),
+		)
+	}
+	return nil
 }
 
 // GenerateMessages is used to generate fake email messages
