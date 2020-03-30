@@ -250,9 +250,16 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 }
 
 // CalculateEmailSize calculates the size of all emais
-func (c *Converter) CalculateEmailSize(hashes ...string) (int64, error) {
+func (c *Converter) CalculateEmailSize(printProgress bool, hashes ...string) (int64, error) {
 	if len(hashes) == 0 {
 		return 0, errors.New("no hashes provided")
+	}
+	var progress *progressbar.ProgressBar
+	if printProgress {
+		progress = progressbar.NewOptions64(
+			int64(len(hashes)),
+			progressbar.OptionSetRenderBlankState(true),
+		)
 	}
 	var fileHashes = make(map[string]bool)
 	var newHashes []string
@@ -285,6 +292,7 @@ func (c *Converter) CalculateEmailSize(hashes ...string) (int64, error) {
 			return 0, err
 		}
 		size += resp.GetNodeStats()[hash].GetCumulativeSize()
+		progress.Add(1)
 	}
 	return size, nil
 }

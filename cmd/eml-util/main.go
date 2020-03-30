@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
 	ipldeml "github.com/RTradeLtd/ipld-eml"
@@ -76,6 +77,33 @@ calculating the total deduplicated size to compare to on disk storage.
 input file is expected to a list of hashes **only**.
 `,
 			Action: func(c *cli.Context) error {
+				cl, err := client.NewClient(client.Opts{
+					ListenAddress: c.String("endpoint"),
+					Insecure:      c.Bool("insecure"),
+				})
+				if err != nil {
+					return err
+				}
+				contents, err := ioutil.ReadFile(c.String("input.file"))
+				if err != nil {
+					return err
+				}
+				hashes := strings.Split(string(contents), "\n")
+				var parsed = make([]string, len(hashes))
+				var max int
+				for i, hash := range hashes {
+					if hash == "" {
+						continue
+					}
+					parsed[i] = hash
+					max = i
+				}
+				converter := ipldeml.NewConverter(ctx, cl)
+				size, err := converter.CalculateEmailSize(true, parsed[:max]...)
+				if err != nil {
+					return err
+				}
+				fmt.Println("total deduplicated size: ", size)
 				return nil
 			},
 			Flags: []cli.Flag{
@@ -118,7 +146,7 @@ input file is expected to a list of hashes **only**.
 					if !c.Bool("only.hash") {
 						formatted = fmt.Sprintf("%sfile: %s\thash: %s\n", formatted, name, hash)
 					} else {
-						formatted = fmt.Sprintf("%shash: %s\n", formatted, hash)
+						formatted = fmt.Sprintf("%s%s\n", formatted, hash)
 					}
 				}
 				return ioutil.WriteFile(c.String("save.file"), []byte(formatted), os.FileMode(0642))

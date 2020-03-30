@@ -28,9 +28,9 @@ The chunked method has a very minor overhead compared to the pure unixfs object,
 
 # samples
 
-To reliably estimate space savings, and performance there is a set of sample emails included in the repository in the `samples` directory. The root of the samples directory contains emails I've sent to myself as a initial test dataset, and an email I received from a newsletter. The `samples/generated` directory contains 5000 emails randomly generated with the `analysis` package. 
+To reliably estimate space savings, and performance there is a set of sample emails included in the repository in the `samples` directory. The root of the samples directory contains emails I've sent to myself as a initial test dataset, and an email I received from a newsletter. The `samples/generated` directory contains 5000 emails randomly generated with the `analysis` package. The samples contained here contain highly duplicated data. It is meant to showcase a best case space savings example.
 
-The following files are from the root of the `samples` directory:
+Overview of the various samples:
 
 `sample1.eml` is a basic email message with no attachments
 `sample2.eml` is an email message with an attachment
@@ -41,12 +41,31 @@ The following files are from the root of the `samples` directory:
 `sample7.eml` is a reply to `sample6.eml` but with samples 1 -> 6 attached
 `sample8.eml` is an email i received from the golang weekly mailing list
 
-## generated
+# samples (generated)
 
-The `generated` directory contains 5000 emails generated with the fake email generator in the `analysis` package. Each email has a randomly generated 720x720 image attached to it, as well as one emoji per paragraph, with a total of 100 paragraphs.
+The `generated` directory contains 5000 emails generated with the fake email generator in the `analysis` package. Each email has a randomly generated 720x720 image attached to it, as well as one emoji per paragraph, with a total of 100 paragraphs. 
 
 The following command was used to generate the data:
 
 ```shell
 $> ./eml-util gfe --paragraph.count 100 --email.count 5000 --emoji.count 100 --outdir=samples/generated
 ```
+
+Size on disk is about 144MB and size on IPFS is about 133MB which gives us about an 8% space savings on average
+
+# space savings
+
+The non-generated samples are intended to show-case a best case space savings about, when there is predominantly duplicated data. In the non-generated samples, the bulk of the data is composed of the same picture, meant to simulate a situation where the same photo (ex: cat picture) is sent to many different people. 
+
+The generated samples are inteded to show-case the "average/worst-case" space savings, when deduplication is largely derived the nature of content-addressing because there will occasionally be emails that have a small number of chunks that are shared by other emails, as opposed to the exact same image being sent to multiple different people, which leads to deduplication savings as you only need to store the image once.
+
+
+No Optimization:
+
+| Sample Set | IPLD Format | Number Of Emails | IPFS Size | Disk Size | Space Savings | Scenario |
+|------------|-------------|------------------|-----------|-----------|---------------|----------|
+| Real | Pure UnixFS | 8 | 1.93MB | 11MB | 578% | Best Case (lots of duplicated emails + images) |
+| Generated | Pure UnixFS | 5000 | 133MB | 144MB | 8% | Worst Case (virtually no duplicated emails and images) | 
+
+
+As indicate the values listed above are with absolutely no optimization.

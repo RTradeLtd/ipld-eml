@@ -238,7 +238,7 @@ func TestNonChunkSizeCalc(t *testing.T) {
 			}
 		}()
 	}
-	size, err := converter.CalculateEmailSize(hashes...)
+	size, err := converter.CalculateEmailSize(false, hashes...)
 	if err != nil {
 		t.Fatal(err)
 	}
