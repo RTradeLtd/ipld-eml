@@ -1,20 +1,36 @@
 # ipld-eml
 
-`ipld-eml` is an RFC-5322 compliant IPLD email object format. It allows taking emails and storing them as typed objects on IPFS.  Emails are converted into a protocol buffer object before being stored on IPFS. Currently there are two methods of storing on IPFS, as a UnixFS object, or as a specially chunked ipld object.
+`ipld-eml` is an RFC-5322 compliand IPLD object format for storing email messages, in both a space efficient, and time efficient manner. TemporalX is used as the interface into IPFS. Emails are converted into a protocol buffer object, before being stored onto IPFS. There are currently two methods for storing the IPLD objects:
 
-## unixfs
+* Entirely as a UnixFS object
+* Chunked into 1MB blocks, with all blocks wrapped in a single unixfs object.
 
-The workflow for unixfs is similar to the dedicated IPLD object, except we take the protocol buffer object, marshal it, and store it as a unixfs object
+This repository also includes a CLI tool enabling you to convert emails manually, or generate fake emails
 
-## chunked
+# data format overview
 
-The workflow for this involves manually chunking the email protocol buffer object into chunks of slightly under 1MB in size. These chunks are then recorded in a wrapper object, which is then stored as a unixfs object. Because individual DAG objects can't be larger than 1MB in size, otherwise they will be unable to be transferred through the network, it is possible that storing the email chunk wrapper object will be larger than 1MB in size. As such, the unixfs object type allows us to conveniently not have to deal with the maximum size of the wrapper object.
+## unixfs workflow
 
-Very useful if you want to split up email parts across different nodes, or regions.
+* Email is converted into protocol buffer object
+* Protocol buffer object is saved onto IPFS as a unixfs object
+
+## chunked workflow
+
+* Email is converted into protocol buffer object
+* Object is serialzed
+* Chunks the serialized byte slice into slight under 1MB in size
+* Store byte slice on IPFS as a block
+* Create a protocol buffer "chunked email" object
+* Store a map of `chunk number -> block hash`
+* Store chunked email object on ipfs as a unixfs object (done to avoid possible isuses with store protocol buffer object directly being larger than 1MB)
+
+The chunked method has a very minor overhead compared to the pure unixfs object, but enables more fine-grained distribution of chunks across nodes in the network
 
 # samples
 
-## overview
+To reliably estimate space savings, and performance there is a set of sample emails included in the repository in the `samples` directory. The root of the samples directory contains emails I've sent to myself as a initial test dataset, and an email I received from a newsletter. The `samples/generated` directory contains 5000 emails randomly generated with the `analysis` package. 
+
+The following files are from the root of the `samples` directory:
 
 `sample1.eml` is a basic email message with no attachments
 `sample2.eml` is an email message with an attachment
@@ -27,7 +43,7 @@ Very useful if you want to split up email parts across different nodes, or regio
 
 ## generated
 
-The `generated` directory contains 5000 emails generated with the fake email generator in the `analysis` package. Each email has a randomly generated 720x720 image attached to it, as well as one emoji per paragraph.
+The `generated` directory contains 5000 emails generated with the fake email generator in the `analysis` package. Each email has a randomly generated 720x720 image attached to it, as well as one emoji per paragraph, with a total of 100 paragraphs.
 
 The following command was used to generate the data:
 
