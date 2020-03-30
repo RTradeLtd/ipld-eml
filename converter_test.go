@@ -12,6 +12,19 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
+func getSamples(t *testing.T) []string {
+	files, err := ioutil.ReadDir("samples")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fs := []string{}
+	for _, fh := range files {
+		if !fh.IsDir() {
+			fs = append(fs, fh.Name())
+		}
+	}
+	return fs
+}
 func TestConverter(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -24,7 +37,7 @@ func TestConverter(t *testing.T) {
 		t.Fatal(err)
 	}
 	converter := NewConverter(ctx, cl)
-	var files = []string{"./samples/sample1.eml", "./samples/sample2.eml", "./samples/sample3.eml", "./samples/sample4.eml", "./samples/sample5.eml", "./samples/sample6.eml", "./samples/sample7.eml", "./samples/sample8.eml"}
+	files := getSamples(t)
 	for _, file := range files {
 		func() {
 			fh, err := os.Open(file)
@@ -83,7 +96,7 @@ func TestChunkSizeCalc(t *testing.T) {
 		t.Fatal(err)
 	}
 	converter := NewConverter(ctx, cl)
-	var files = []string{"./samples/sample1.eml", "./samples/sample2.eml", "./samples/sample3.eml", "./samples/sample4.eml", "./samples/sample5.eml", "./samples/sample6.eml", "./samples/sample7.eml", "./samples/sample8.eml"}
+	files := getSamples(t)
 	var hashes = make([]string, len(files))
 	for i, file := range files {
 		fh, err := os.Open(file)
@@ -153,7 +166,7 @@ func TestNonChunkSizeCalc(t *testing.T) {
 		t.Fatal(err)
 	}
 	converter := NewConverter(ctx, cl)
-	var files = []string{"./samples/sample1.eml", "./samples/sample2.eml", "./samples/sample3.eml", "./samples/sample4.eml", "./samples/sample5.eml", "./samples/sample6.eml", "./samples/sample7.eml", "./samples/sample8.eml"}
+	files := getSamples(t)
 	var hashes []string
 	var foundHashes = make(map[string]bool)
 	for _, file := range files {
