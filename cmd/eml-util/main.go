@@ -25,7 +25,7 @@ func main() {
 	app.Commands = cli.Commands{
 		{
 			Name:    "convert",
-			Aliases: []string{"conv", "cn"},
+			Aliases: []string{"conv", "c"},
 			Usage:   "read emails from directory uploading to ipfs",
 			Action: func(c *cli.Context) error {
 				cl, err := client.NewClient(client.Opts{
