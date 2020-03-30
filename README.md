@@ -70,10 +70,10 @@ At face value the worst case savings of 8% might not seem like much. However if 
 |----------|-----------|-----------|-------------|------|
 | Best | 20PB | 3.46PB | 16.54PB | 33.08PB
 | Best | 20GB | 3.46GB | 16.54GB | 33.08GB
-| Best | 20MB | 3.46MB | 16.54MB | 33.08GB
+| Best | 20MB | 3.46MB | 16.54MB | 33.08MB
 | Worst | 20PB | 18.4PB | 1.6PB | 3.2PB
-| Worst | 20GB | 18.4GB | 1.6PB | 3.2GB
-| Worst | 20MB | 18.4MB | 1.6PB | 3.2MB
+| Worst | 20GB | 18.4GB | 1.6GB | 3.2GB
+| Worst | 20MB | 18.4MB | 1.6MB | 3.2MB
 
 Even at 20PB, saving 1.6PB amounts to significant real world financial savings, which when you're operating at that scale of storage is huge. Massive email stores, and archives aren't just taking 20PB and using a bunch of cheap Western Digital disks without any redundancy. They're using enterprise grade hard drives which in and off itself is expensive, but there also using things like RAID, zRAID, etc... which amplifies the space savings even more.
 
