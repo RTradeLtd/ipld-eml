@@ -2,3 +2,5 @@
 eml-util
 
 outdir/
+
+*.txt

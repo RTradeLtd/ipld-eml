@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -40,12 +41,21 @@ func main() {
 				if err != nil {
 					return err
 				}
+				formatted := ""
 				for name, hash := range res {
-					fmt.Printf("file: %s\thash: %s\n", name, hash)
+					formatted = fmt.Sprintf("%sfile: %s\thash: %s\n", formatted, name, hash)
+					if err != nil {
+						return err
+					}
 				}
-				return nil
+				return ioutil.WriteFile(c.String("save.file"), []byte(formatted), os.FileMode(0642))
 			},
 			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:  "save.file",
+					Usage: "file to save name -> hash informatino",
+					Value: "converted_results.txt",
+				},
 				&cli.StringFlag{
 					Name:  "endpoint",
 					Usage: "temporalx endpoint to connect to",
