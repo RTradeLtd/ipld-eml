@@ -135,7 +135,7 @@ func GenerateFakeEmails(count int) []string {
 
 func genImage() []byte {
 	buf := bytes.NewBuffer(nil)
-	img := image.NewRGBA(image.Rect(0, 0, 1920, 1080))
+	img := image.NewRGBA(image.Rect(0, 0, 720, 420))
 
 	// Draw a red dot at (2, 3)
 	img.Set(2, 3, color.RGBA{uint8(rand.Int63n(255)), uint8(rand.Int63n(255)), uint8(rand.Int63n(255)), uint8(rand.Int63n(255))})
