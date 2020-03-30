@@ -12,6 +12,7 @@ import (
 	xpb "github.com/RTradeLtd/TxPB/v3/go"
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
 	"github.com/RTradeLtd/ipld-eml/pb"
+	"github.com/schollz/progressbar/v2"
 )
 
 // Converter takes eml files and converting them to an ipfs friendly version
@@ -34,6 +35,16 @@ func (c *Converter) AddFromDirectory(dir string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	var numFiles int
+	for _, f := range files {
+		if !f.IsDir() {
+			numFiles++
+		}
+	}
+	progress := progressbar.NewOptions64(
+		int64(numFiles),
+		progressbar.OptionSetRenderBlankState(true),
+	)
 	var hashes = make(map[string]string, len(files))
 	for _, f := range files {
 		if f.IsDir() {
@@ -52,6 +63,9 @@ func (c *Converter) AddFromDirectory(dir string) (map[string]string, error) {
 			return c.PutEmail(em)
 		}()
 		if err != nil {
+			return nil, err
+		}
+		if err := progress.Add(1); err != nil {
 			return nil, err
 		}
 		hashes[f.Name()] = hash

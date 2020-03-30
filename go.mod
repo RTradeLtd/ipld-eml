@@ -10,5 +10,7 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/jhillyerd/enmime v0.8.0
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
+	github.com/schollz/progressbar v1.0.0
+	github.com/schollz/progressbar/v2 v2.15.0
 	github.com/urfave/cli/v2 v2.2.0
 )

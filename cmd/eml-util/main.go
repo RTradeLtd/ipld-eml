@@ -23,7 +23,69 @@ func main() {
 		Name:  "Alex Trottier",
 		Email: "postables@rtradetechnologies.com",
 	})
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:  "save.file",
+			Usage: "file to save name -> hash informatino",
+			Value: "converted_results.txt",
+		},
+		&cli.StringFlag{
+			Name:  "endpoint",
+			Usage: "temporalx endpoint to connect to",
+			Value: "localhost:9090",
+		},
+		&cli.StringFlag{
+			Name:  "email.dir",
+			Usage: "directory containing emails, must not be a recursive directory",
+			Value: "outdir",
+		},
+		&cli.BoolFlag{
+			Name:  "insecure",
+			Usage: "establish an insecure connection to temporalx",
+			Value: true,
+		},
+		&cli.StringFlag{
+			Name:  "outdir",
+			Usage: "directory to store emails is",
+			Value: "outdir",
+		},
+		&cli.IntFlag{
+			Name:  "email.count",
+			Usage: "number of emails to generate",
+			Value: 100,
+		},
+		&cli.IntFlag{
+			Name:  "emoji.count",
+			Usage: "number of emojis to add in email",
+			Value: 100,
+		},
+		&cli.IntFlag{
+			Name:  "paragraph.count",
+			Usage: "number of paragraphs to generate",
+			Value: 10,
+		},
+	}
 	app.Commands = cli.Commands{
+		{
+			Name:    "benchmark",
+			Aliases: []string{"bench", "b"},
+			Usage:   "run specialized benchmark tool, calculating space savings",
+			Description: `
+this adds the "samples/generated" directory to ipfs,
+calculating the total deduplicated size to compare to on disk storage.
+input file is expected to a list of hashes **only**.
+`,
+			Action: func(c *cli.Context) error {
+				return nil
+			},
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:  "input.file",
+					Usage: "file to get hash information from",
+					Value: "converted_results.txt",
+				},
+			},
+		},
 		{
 			Name:    "convert",
 			Aliases: []string{"conv", "c"},
@@ -36,6 +98,16 @@ func main() {
 				if err != nil {
 					return err
 				}
+				var numFiles int
+				fh, err := ioutil.ReadDir(c.String("email.dir"))
+				if err != nil {
+					return err
+				}
+				for _, f := range fh {
+					if !f.IsDir() {
+						numFiles++
+					}
+				}
 				converter := ipldeml.NewConverter(ctx, cl)
 				res, err := converter.AddFromDirectory(c.String("email.dir"))
 				if err != nil {
@@ -43,33 +115,20 @@ func main() {
 				}
 				formatted := ""
 				for name, hash := range res {
-					formatted = fmt.Sprintf("%sfile: %s\thash: %s\n", formatted, name, hash)
-					if err != nil {
-						return err
+					if !c.Bool("only.hash") {
+						formatted = fmt.Sprintf("%sfile: %s\thash: %s\n", formatted, name, hash)
+					} else {
+						formatted = fmt.Sprintf("%shash: %s\n", formatted, hash)
 					}
 				}
 				return ioutil.WriteFile(c.String("save.file"), []byte(formatted), os.FileMode(0642))
 			},
 			Flags: []cli.Flag{
-				&cli.StringFlag{
-					Name:  "save.file",
-					Usage: "file to save name -> hash informatino",
-					Value: "converted_results.txt",
-				},
-				&cli.StringFlag{
-					Name:  "endpoint",
-					Usage: "temporalx endpoint to connect to",
-					Value: "localhost:9090",
-				},
-				&cli.StringFlag{
-					Name:  "email.dir",
-					Usage: "directory containing emails, must not be a recursive directory",
-					Value: "outdir",
-				},
 				&cli.BoolFlag{
-					Name:  "insecure",
-					Usage: "establish an insecure connection to temporalx",
-					Value: true,
+					Name:    "only.hash",
+					Aliases: []string{"oh", "o"},
+					Usage:   "whether or not to only store hash information",
+					Value:   true,
 				},
 			},
 		},
@@ -85,28 +144,6 @@ func main() {
 					c.Int("emoji.count"),
 					c.Int("paragraph.count"),
 				)
-			},
-			Flags: []cli.Flag{
-				&cli.StringFlag{
-					Name:  "outdir",
-					Usage: "directory to store emails is",
-					Value: "outdir",
-				},
-				&cli.IntFlag{
-					Name:  "email.count",
-					Usage: "number of emails to generate",
-					Value: 100,
-				},
-				&cli.IntFlag{
-					Name:  "emoji.count",
-					Usage: "number of emojis to add in email",
-					Value: 100,
-				},
-				&cli.IntFlag{
-					Name:  "paragraph.count",
-					Usage: "number of paragraphs to generate",
-					Value: 10,
-				},
 			},
 		},
 	}
