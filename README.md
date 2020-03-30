@@ -59,13 +59,45 @@ The non-generated samples are intended to show-case a best case space savings ab
 
 The generated samples are inteded to show-case the "average/worst-case" space savings, when deduplication is largely derived the nature of content-addressing because there will occasionally be emails that have a small number of chunks that are shared by other emails, as opposed to the exact same image being sent to multiple different people, which leads to deduplication savings as you only need to store the image once.
 
-
-No Optimization:
-
 | Sample Set | IPLD Format | Number Of Emails | IPFS Size | Disk Size | Space Savings | Scenario |
 |------------|-------------|------------------|-----------|-----------|---------------|----------|
 | Real | Pure UnixFS | 8 | 1.93MB | 11MB | 578% | Best Case (lots of duplicated emails + images) |
 | Generated | Pure UnixFS | 5000 | 133MB | 144MB | 8% | Worst Case (virtually no duplicated emails and images) | 
 
+At face value the worst case savings of 8% might not seem like much. However if we extrapolate to larger data sizes even with 8% savings it makes a huge difference.
 
-As indicate the values listed above are with absolutely no optimization.
+| Scenario | Disk Size | IPFS Size | Space Saved (no raid / raid-0) | Space Saved (raid-1)
+|----------|-----------|-----------|-------------|------|
+| Best | 20PB | 3.46PB | 16.54PB | 33.08PB
+| Best | 20GB | 3.46GB | 16.54GB | 33.08GB
+| Best | 20MB | 3.46MB | 16.54MB | 33.08GB
+| Worst | 20PB | 18.4PB | 1.6PB | 3.2PB
+| Worst | 20GB | 18.4GB | 1.6PB | 3.2GB
+| Worst | 20MB | 18.4MB | 1.6PB | 3.2MB
+
+Even at 20PB, saving 1.6PB amounts to significant real world financial savings, which when you're operating at that scale of storage is huge. Massive email stores, and archives aren't just taking 20PB and using a bunch of cheap Western Digital disks without any redundancy. They're using enterprise grade hard drives which in and off itself is expensive, but there also using things like RAID, zRAID, etc... which amplifies the space savings even more.
+
+# cli usage
+
+## fake email generation
+
+```shell
+$> eml-util generate-fake-emails --paragraph.count 100 --email.count 5000 --emoji.count 100 --outdir=samples/generated
+$> eml-util gen-fake-emails --paragraph.count 100 --email.count 5000 --emoji.count 100 --outdir=samples/generated
+$> eml-util gfe --paragraph.count 100 --email.count 5000 --emoji.count 100 --outdir=samples/generated
+```
+
+## converts emails to ipld eml objects
+
+```shell
+$> eml-util --email.dir=samples/generated/10k convert
+$> eml-util --email.dir=samples/generated/10k con
+$> eml-util --email.dir=samples/generated/10k c
+```
+## Benchmarking
+
+```shell
+$> eml-util benchmark
+$> eml-util bench
+$> eml-util b
+```

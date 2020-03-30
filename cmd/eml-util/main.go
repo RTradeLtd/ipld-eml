@@ -68,14 +68,10 @@ func main() {
 	}
 	app.Commands = cli.Commands{
 		{
-			Name:    "benchmark",
-			Aliases: []string{"bench", "b"},
-			Usage:   "run specialized benchmark tool, calculating space savings",
-			Description: `
-this adds the "samples/generated" directory to ipfs,
-calculating the total deduplicated size to compare to on disk storage.
-input file is expected to a list of hashes **only**.
-`,
+			Name:        "benchmark",
+			Aliases:     []string{"bench", "b"},
+			Usage:       "run specialized benchmark tool, calculating space savings",
+			Description: "calculates the total deduplicated size for the given emails",
 			Action: func(c *cli.Context) error {
 				cl, err := client.NewClient(client.Opts{
 					ListenAddress: c.String("endpoint"),
