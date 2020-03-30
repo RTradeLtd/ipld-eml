@@ -40,7 +40,7 @@ func (c *Converter) AddFromDirectory(dir string) (map[string]string, error) {
 			continue
 		}
 		hash, err := func() (string, error) {
-			fh, err := os.Open("dir" + "/" + f.Name())
+			fh, err := os.Open(dir + "/" + f.Name())
 			if err != nil {
 				return "", err
 			}
