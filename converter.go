@@ -62,12 +62,8 @@ func (c *Converter) PutEmail(email *pb.Email) (string, error) {
 
 // GetEmailChunked is used to return an email from its chunked storage format
 func (c *Converter) GetEmailChunked(hash string) (*pb.Email, error) {
-	resp, err := c.xclient.DownloadFile(c.ctx, &xpb.DownloadRequest{Hash: hash}, false)
+	ep, err := c.GetChunkedEmail(hash)
 	if err != nil {
-		return nil, err
-	}
-	ep := new(pb.ChunkedEmail)
-	if err := ep.Unmarshal(resp.Bytes()); err != nil {
 		return nil, err
 	}
 	var (
@@ -278,4 +274,57 @@ func (c *Converter) Convert(reader io.Reader) (*pb.Email, error) {
 		}
 	}
 	return email, nil
+}
+
+// GetChunkedEmail returns a ChunkedEmail object
+func (c *Converter) GetChunkedEmail(hash string) (*pb.ChunkedEmail, error) {
+	resp, err := c.xclient.DownloadFile(c.ctx, &xpb.DownloadRequest{Hash: hash}, false)
+	if err != nil {
+		return nil, err
+	}
+	ep := new(pb.ChunkedEmail)
+	if err := ep.Unmarshal(resp.Bytes()); err != nil {
+		return nil, err
+	}
+	return ep, nil
+}
+
+// CalculateEmailSize calculates the size of all emais
+func (c *Converter) CalculateEmailSize(hashes ...string) (int64, error) {
+	if len(hashes) == 0 {
+		return 0, errors.New("no hashes provided")
+	}
+	var fileHashes = make(map[string]bool)
+	var newHashes []string
+	for _, hash := range hashes {
+		em, err := c.GetEmail(hash)
+		if err != nil {
+			return 0, err
+		}
+		for _, embed := range em.EmbeddedFiles {
+			if !fileHashes[embed.DataHash] {
+				fileHashes[embed.DataHash] = true
+				newHashes = append(newHashes, embed.DataHash)
+			}
+		}
+		for _, attach := range em.Attachments {
+			if !fileHashes[attach.DataHash] {
+				fileHashes[attach.DataHash] = true
+				newHashes = append(newHashes, attach.DataHash)
+			}
+		}
+	}
+	hashes = append(hashes, newHashes...)
+	var size int64
+	for _, hash := range hashes {
+		resp, err := c.xclient.Dag(c.ctx, &xpb.DagRequest{
+			RequestType: xpb.DAGREQTYPE_DAG_STAT,
+			Hash:        hash,
+		})
+		if err != nil {
+			return 0, err
+		}
+		size += resp.GetNodeStats()[hash].GetCumulativeSize()
+	}
+	return size, nil
 }

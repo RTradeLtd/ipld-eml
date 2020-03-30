@@ -1,0 +1,978 @@
+Delivered-To: alext@rtradetechnologies.com
+Received: by 2002:ac0:a94f:0:0:0:0:0 with SMTP id g15csp3175472ima;
+        Fri, 27 Mar 2020 07:48:21 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vur5Aj58fvsdTqOZSttoyzRFK9+mkJjKHYWAuL1XiBnOwMRlwMAeL9o4RbWRM0jXnxqX4n3
+X-Received: by 2002:a17:906:dbf2:: with SMTP id yd18mr13164614ejb.324.1585320501520;
+        Fri, 27 Mar 2020 07:48:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1585320501; cv=none;
+        d=google.com; s=arc-20160816;
+        b=LcNfOqWbR7hnDkM0MeA0XR++EQSTsp2yPXnD57F7Quju2pVcfBBrNyXVB33Jat6G3q
+         DaqZVNWl8IjoT1sbDwb+2EtGOc7UDvO5ksxzIIqzZm7vxUSXK2EkgrNopbB3d3yNs1Wp
+         1ivOg/UBo46mlj4VOSEWK4MIdr+3rqR9z17YceJSuWZT5At+X0rXGnEV1MFkpEsCsK9U
+         PQWc2sMQhx8tyvRbFirNKvKEtenPh8hbLmLHITD22C80POml28t+K+Ilnw3C/URnNnR7
+         dwQ3xL9ObbYKH1t2fD20758xSo0YguxVg6jCUoracJD9/oIse3Cz/5mNaFWllkIPERYB
+         OT1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:subject:message-id:to:mime-version:from:date
+         :dkim-signature;
+        bh=Xb71wGfxVXTQQ+6MyFhgX2jsOVzMnkHwoE43mpgqA8k=;
+        b=ge/9Jldn78l/JkwXs8EdF0QMDgHfZ1T8DWhQq1EGfwhrHxJPdJGSUnrV6UtGSjgJJ7
+         uW7tfDJJrU7/CReyai/1h6nnz043JjHdCEhyV4BpDcwG8FcNH3eFxp6NRn69Xx5A43VZ
+         /Ozv+kDHh4hZGWl8W+o+iyQFyxgc95TwU+opLxH3uITviPTqDrriRVREz4SjDcggI7oi
+         FzZNqyK294j4fPXH7l/fxQiw92Nh/yPO/1P2W2iEg+2M0CPSYGvfUA+nq16+ISSu59gl
+         3QQtZRaYH4RK1MXUMTF0TvsuAo8IMUtWTV2HNQjXwgMD/R9AJ/7jtjjOnm4S53X9HM6B
+         0pWg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@golangweekly.com header.s=s1 header.b=gasYF16M;
+       spf=pass (google.com: domain of bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com designates 168.245.52.89 as permitted sender) smtp.mailfrom="bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com";
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=golangweekly.com
+Return-Path: <bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com>
+Received: from o3.ptr904.cooperpress.com (o3.ptr904.cooperpress.com. [168.245.52.89])
+        by mx.google.com with ESMTPS id qn20si3356763ejb.331.2020.03.27.07.48.19
+        for <alext@rtradetechnologies.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Mar 2020 07:48:21 -0700 (PDT)
+Received-SPF: pass (google.com: domain of bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com designates 168.245.52.89 as permitted sender) client-ip=168.245.52.89;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@golangweekly.com header.s=s1 header.b=gasYF16M;
+       spf=pass (google.com: domain of bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com designates 168.245.52.89 as permitted sender) smtp.mailfrom="bounces+3465002-d456-alext=rtradetechnologies.com@sg.golangweekly.com";
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=golangweekly.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; 
+	d=golangweekly.com; 
+	h=content-type:from:mime-version:to:subject:list-unsubscribe; 
+	s=s1; bh=Xb71wGfxVXTQQ+6MyFhgX2jsOVzMnkHwoE43mpgqA8k=; b=gasYF16
+	MMu5A/5t6BBoOW4vHFv3nnAhJI1m6Xxzs3TZvIUotmkVHEQ6ncUXZrTbCsYalnNB
+	yDic200OEkBHOvIQri4DUSHqn8XkHv/NwxI4rc+ROtCmD6i65ofkyiDLbA4vQUk1
+	WuSJy3rcPvtjWSMfOnRCgeoSijPxP+fqSI+E=
+Received: by filter1778p1mdw1.sendgrid.net with SMTP id filter1778p1mdw1-3328-5E7E09BA-6
+        2020-03-27 14:12:10.239947384 +0000 UTC m=+138222.687197844
+Received: from MzQ2NTAwMg (unknown)
+	by ismtpd0005p1lon1.sendgrid.net (SG) with HTTP id d5PJohhPQDiMu7yN5zYY7g
+	Fri, 27 Mar 2020 14:12:10.146 +0000 (UTC)
+Content-Type: multipart/alternative; boundary=c7a57f2551204729737df6b8eba56acd2412e0ab22f0d748b256a5e876de
+Date: Fri, 27 Mar 2020 14:48:17 +0000 (UTC)
+From: "Golang Weekly" <peter@golangweekly.com>
+Mime-Version: 1.0
+To: alext@rtradetechnologies.com
+Message-ID: <d5PJohhPQDiMu7yN5zYY7g@ismtpd0005p1lon1.sendgrid.net>
+Subject: What the current global situation means for Go
+List-Unsubscribe: <mailto:unsub-a1ec8ff3b1@n2.cooperpress.com>
+X-SG-EID: HLVEHszO9uFeo1PhynXyTnFSWvbtrPLBJvsjlTZIr9PeGrTuXNyiUICBd+cOCX4e5YuPulc/zjOYJV
+ Fehk5Y/cRotWX0NEEigDAvwkEaxqBIUCyQjZXtYxBxOrLAWuf8UVWmj/9phzQscvsyXdDwx9957mhE
+ zay/A3WS1fFHixDugg6hmlrBu36WDlyieD9QL/AaEo3rCHif6USndWSEKcYft7QrPH89J1u1UOMBXV
+ Q=
+
+--c7a57f2551204729737df6b8eba56acd2412e0ab22f0d748b256a5e876de
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+
+Plus more Go news and links.
+
+#305 =E2=80=94 March 27, 2020
+
+Unsubscribe ( https://golangweekly.com/leave/a1ec8ff3b1 )  : Read on the We=
+b ( https://golangweekly.com/issues/305 )
+
+Golang Weekly
+
+Go, the Go Community, and the Pandemic=20
+( https://blog.golang.org/pandemic ) =E2=80=94 An official post from three
+core team members on how the pandemic is affecting our community
+along with resources on things like online training, open-source,
+job postings, and current 1.15 impacts.
+
+The Go Blog
+
+How to Use Diago to Diagnose CPU and Memory Usage in Go
+Programs=20
+( https://remy.io/blog/how-to-use-diago-to-diagnose-cpu-and-memory-usage-in=
+-go-programs/ )
+ =E2=80=94 Diago is a visualization tool that takes pprof output
+(profile, heap) and displays them in a tree format in
+the terminal.
+
+R=C3=A9my Mathieu
+
+How to Use PostgreSQL Together with the Programming Language
+Golang (Go)=20
+( https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-go?utm=
+_source=3DCooperpress&utm_medium=3Dad )
+ =E2=80=94 Here are some step-by-step instructions on how to configure,
+connect and launch Go application with PostgreSQL.
+
+EnterpriseDB sponsor
+
+Announcing RxGo v2: Reactive Extensions for Go=20
+( https://medium.com/@teivah/introducing-rxgo-v2-e7e369faa99a ) =E2=80=94
+RxGo is a Go implementation of ReactiveX, making it akin to RxJS,
+etc. if you want to write asynchronous programs oriented around
+streams of events/observables, pipelines, etc. The =E2=80=98Getting
+Started=E2=80=99 docs ( https://github.com/ReactiveX/RxGo#getting-started )=
+  will help clarify the ideas. GitHub repo.=20
+( https://github.com/ReactiveX/RxGo )
+
+Teiva Harsanyi
+
+typex: Examine Go Type Structures, Interfaces and Transitive
+Dependencies ( https://github.com/dtgorski/typex ) =E2=80=94 In other
+words, print out a tree structure of Go packages and their type
+structures and interfaces on the command line.
+
+Daniel T. Gorski
+
+=F0=9F=92=BB Jobs
+
+Find a Dev Job Through Vettery=20
+( https://www.vettery.com/tech?utm_source=3Dnewsletter&utm_medium=3Dcooper-=
+golangweekly&utm_term=3Dtech&utm_content=3Dgrouped&utm_campaign=3Dad-77582 )
+ =E2=80=94 Vettery is completely free for job seekers. Make a profile,
+name your salary, and connect with hiring managers from top
+employers.
+
+Vettery
+
+Enjoy Building Scalable Infrastructure in Go? Stream Is Hiring
+
+( https://angel.co/company/stream/jobs/241159-backend-software-engineer-go )
+ =E2=80=94 Like coding in Go? We do too. Stream is hiring in Amsterdam.
+Apply now=20
+( https://angel.co/company/stream/jobs/241159-backend-software-engineer-go )
+.
+
+Stream
+
+=F0=9F=93=9A Articles & Tutorials
+
+Quickly Find Rust Program Bottlenecks Online Using a Go Tool=20
+( https://pingcap.com/blog/quickly-find-rust-program-bottlenecks-online-usi=
+ng-a-go-tool/ )
+ =E2=80=94 So, the next time a Rustacean tells you how good Rust is, ask
+them to come find you when they need to find issues in their Rust
+app =F0=9F=98=84
+
+PingCAP
+
+Object Fingerprinting for Efficient Data Ingestion=20
+( https://klotzandrew.com/blog/object-fingerprinting-for-efficient-data-ing=
+estion )
+ =E2=80=94 Using a custom JSON unmarshal function to build a hash for
+objects that can be used for efficient comparison of already
+ingested objects.
+
+Andrew Klotz
+
+Video Streaming for Go ( https://get.mux.com/2wantJ8 ) =E2=80=94 Build
+video for your app that Just Works=E2=84=A2. Mux's Video API makes it
+super easy to build video or live streaming into any app.
+
+Mux sponsor
+
+Working with Postgres Transactions in Go=20
+( https://mohitkhare.me/blog/transaction-on-postgres-golang/ )
+
+Mohit Khare
+
+How Does Monzo Keep 1,600 Microservices Spinning?=20
+( https://www.theregister.co.uk/2020/03/09/monzo_microservices/ ) =E2=80=94
+Go only gets a brief mention here, but the entire tech stack
+might be a template for tackling complex distributed systems.
+
+=F0=9F=9B=A0 Code & Tools
+
+Gopher2600: An Atari VCS Emulator=20
+( https://github.com/JetSetIlly/Gopher2600 ) =E2=80=94 A relatively
+feature-complete emulator that includes controller support and
+gameplay recording.
+
+Stephen Illingworth
+
+ION: A Distributed Real-Time Communications (RTC) System=20
+( https://github.com/pion/ion ) =E2=80=94 Powered by both Go and Flutter,
+ION supports WebRTC, as you=E2=80=99d expect, as well as a few other
+protocols for video conferencing, live streaming, etc.
+
+Pion
+
+lmdrouter: A Go HTTP Router for AWS API Gateway-Invoked Lambda
+Functions ( https://github.com/aquasecurity/lmdrouter ) =E2=80=94 A
+simple-to-use library for writing serverless functions that work
+upon API Gateway proxy requests.
+
+Aqua Security
+
+tube: A YouTube-like Video Sharing App=20
+( https://github.com/prologic/tube ) =E2=80=94 Want to deploy your own
+YouTube-esque site but running by your own rules? Worth a try.
+Supports automatic transcoding to MP4 H.265 AAC, multiple
+collections and RSS feeds.
+
+James Mills
+
+Faster CI/CD for All Your Software Projects Using Buildkite=20
+( https://buildkite.com/?pk_campaign=3Dgolangweekly-270320&pk_source=3Dcp-g=
+olangweekly&pk_medium=3Dnewsletter )
+
+
+Buildkite sponsor
+
+Logrus 1.5: A Feature Rich Structured Logger=20
+( https://github.com/sirupsen/logrus ) =E2=80=94 Supports JSON formatting,
+hooks (for sending certain log entries to external services,
+say), plus it=E2=80=99s API compatible with the standard library=E2=80=99s =
+logger
+too, so try dropping it in.
+
+Simon Eskildsen
+
+Gold: A Reinforcement Learning Library=20
+( https://github.com/aunum/gold ) =E2=80=94 Provides a set of agents that
+can be used to solve challenges in various environments.
+
+AUNUM
+
+Duit: A Simple Money Tracker, Built with Go and Mithril.js=20
+( https://github.com/RadhiFadlillah/duit ) =E2=80=94 A complete, simple
+money tracking web app.
+
+Radhi
+
+=F0=9F=92=8C A valuable message from Russ Cox
+
+Over on the golang-dev mailing list, Russ Cox posted a valuable
+message=20
+( https://groups.google.com/d/msg/golang-dev/UxvN1W2B-zg/Vx1H8icfAwAJ )
+:
+
+Go development is not isolated from world events; work on
+Go always comes second to more basic concerns like personal and
+family health and safety. Nearly all of us are working at reduced
+capacity these days. I expect that capacity to drop further over
+the next few months.
+
+[...]
+
+If our own working capacity is reduced but we keep the same
+timelines, then we must reduce the scope of what we expect to be
+in the release. Some new features or planned won't make it.
+That's OK - we'll get them next time. We all need to accept that,
+for our own work and work by others.
+
+Most of all, let's all please be extra kind and charitable with
+each other. It's always good advice to remember that you don't
+know what external stresses are affecting the person on the other
+end of the email, review thread, or GitHub comment, but it's
+especially important now.
+
+The above is just a quick summary of the main points, but it's
+also worth reading in full.=20
+( https://groups.google.com/d/msg/golang-dev/UxvN1W2B-zg/Vx1H8icfAwAJ )
+ Thanks Russ.
+
+Curated by Glenn Goodrich ( https://twitter.com/ruprict )
+and Peter Cooper ( https://twitter.com/peterc ).
+
+Change your email address=20
+( https://golangweekly.com/edit_subscription/a1ec8ff3b1 ) or Stop
+getting this newsletter=20
+( https://golangweekly.com/leave/a1ec8ff3b1 )
+
+=C2=A9 Cooper Press Ltd =C2=B7 Fairfield Enterprise Centre, Louth,
+LN11 0LS, United Kingdom=
+
+--c7a57f2551204729737df6b8eba56acd2412e0ab22f0d748b256a5e876de
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=UTF-8
+Mime-Version: 1.0
+
+<!DOCTYPE html>
+<html>
+  <head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8">
+    <meta charset=3D"utf-8">
+    <meta name=3D"viewport" content=3D"width=3Ddevice-width">
+    <meta name=3D"format-detection" content=3D"date=3Dno">
+    <meta name=3D"format-detection" content=3D"telephone=3Dno">
+=20=20=20=20
+  <style>body {
+margin: 0; padding: 0; height: 100%; width: 100%; background-color: white; =
+-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-rendering:=
+ optimizeLegibility; font-feature-settings: "kern" 1; direction: ltr;
+}
+body {
+font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-si=
+ze: 15px; line-height: 1.55em;
+}
+img {
+border: 0; outline: none; height: auto; text-decoration: none; max-width: 1=
+00%; line-height: 100%;
+}
+@media screen and (max-width: 600px) {
+  table[id=3D"main"] {
+    max-width: 600px !important; width: 100% !important; min-width: 100% !i=
+mportant;
+  }
+  .nomob {
+    display: none !important;
+  }
+  .onlymob {
+    display: inline-block !important;
+  }
+  .rightifmob {
+    text-align: right !important;
+  }
+  .som {
+    max-width: 33% !important;
+  }
+  div.footer p {
+    text-align: left !important;
+  }
+  div.footer td {
+    text-align: left !important;
+  }
+  .el-columns .column {
+    display: block; width: 100% !important;
+  }
+}
+</style>
+</head>
+<body style=3D'height: 100%; width: 100%; background-color: white; -webkit-=
+text-size-adjust: 100%; -ms-text-size-adjust: 100%; text-rendering: optimiz=
+eLegibility; font-feature-settings: "kern" 1; direction: ltr; font-family: =
+-apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; lin=
+e-height: 1.55em; margin: 0; padding: 0;'>
+<div id=3D"preview" class=3D"noarchive" style=3D"display: none; color: #666=
+;">Plus more Go news and links.</div>
+<!--[if (gte mso 9)|(IE)]>
+<table cellpadding=3D"0" cellspacing=3D"0" align=3D"center" bgcolor=3D"#fff=
+fff" width=3D"600"><tr><td valign=3D"top" style=3D"width: 600px;" bgcolor=
+=3D"#ffffff"><![endif]-->
+<table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" id=
+=3D"main" width=3D"100%" style=3D"table-layout: fixed; font-family: -apple-=
+system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-heigh=
+t: 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: c=
+ollapse; max-width: 600px; height: 100% !important; direction: ltr; padding=
+: 0px;">
+  <tr><td style=3D"font-family: -apple-system,BlinkMacSystemFont,Helvetica,=
+sans-serif; font-size: 15px; line-height: 1.55em; mso-table-lspace: 0pt; ms=
+o-table-rspace: 0pt; border-collapse: collapse;">
+  <div id=3D"content">    <!-- left/right splitbar -->
+    <table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"mso-=
+table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;"><tr>
+<td width=3D"50%" align=3D"left" style=3D"padding-left: 4px; font-family: -=
+apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line=
+-height: 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse;"><p style=3D"font-size: 12px; color: #999999; text-transform=
+: uppercase; line-height: 1.0em; margin-top: 0.8em; margin-bottom: 0.8em;">=
+#305 =E2=80=94 March 27, 2020</p></td>
+<td width=3D"50%" align=3D"right" style=3D"padding-right: 4px; font-family:=
+ -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; li=
+ne-height: 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-col=
+lapse: collapse;"><p style=3D"font-size: 12px; text-transform: uppercase; l=
+ine-height: 1.0em; margin-top: 0.8em; margin-bottom: 0.8em;"><a href=3D"htt=
+ps://golangweekly.com/leave/a1ec8ff3b1" style=3D"text-decoration: none; col=
+or: #0099b4;">Unsubscribe</a>=C2=A0=C2=A0:=C2=A0=C2=A0<a href=3D"https://go=
+langweekly.com/issues/305" style=3D"text-decoration: none; color: #0099b4;"=
+>Read on the Web</a></p></td>
+</tr></table>
+    <!-- masthead -->
+    <table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"back=
+ground-color: #6cd7e5; text-align: center; color: #444444; mso-table-lspace=
+: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;" class=3D"el-masth=
+ead"><tr><td style=3D"font-family: -apple-system,BlinkMacSystemFont,Helveti=
+ca,sans-serif; font-size: 15px; line-height: 1.55em; mso-table-lspace: 0pt;=
+ mso-table-rspace: 0pt; border-collapse: collapse; padding: 0 12px;"><p sty=
+le=3D"font-size: 1.8em; font-weight: 600; line-height: 1.0em; margin-top: 0=
+.8em; margin-bottom: 0.8em;">Golang Weekly</p></td></tr></table>
+<table width=3D"100%" class=3D"el-fullwidthimage" cellpadding=3D"0" cellspa=
+cing=3D"0" style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-co=
+llapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMacSyst=
+emFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso-tabl=
+e-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;">
+  <a href=3D"https://golangweekly.com/link/85960/a1ec8ff3b1" style=3D"text-=
+decoration: none; color: #0099b4;"><img src=3D"https://res.cloudinary.com/c=
+press/image/upload/w_1280,e_sharpen:60/v1585311288/bx9wwecan2ao55sakctv.jpg=
+" alt=3D"" width=3D"640" style=3D"outline: none; height: auto; text-decorat=
+ion: none; max-width: 100%; line-height: 100%; width: 100%; border: 0;"></a>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; font-size: 1.05em; line-height: 1.65em;"><span style=3D"font-weight: 60=
+0; font-size: 1.2em !important; color: #000;" class=3D"mainlink"><a href=3D=
+"https://golangweekly.com/link/85960/a1ec8ff3b1" title=3D"blog.golang.org" =
+style=3D"text-decoration: none; color: #0099b4; border-bottom-width: 1px !i=
+mportant; border-bottom-color: #ddd !important; border-bottom-style: solid =
+!important; font-size: 1.1em; line-height: 1.4em;">Go, the Go Community, an=
+d the Pandemic</a></span> =E2=80=94 An official post from three core team m=
+embers on how the pandemic is affecting our community along with resources =
+on things like online training, open-source, job postings, and current 1.15=
+=C2=A0impacts.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">T=
+he Go Blog </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85961/a1ec8ff3b1" title=3D"remy.io" style=3D"text-decoration: n=
+one; color: #0099b4; border-bottom-width: 1px !important; border-bottom-col=
+or: #ddd !important; border-bottom-style: solid !important; font-size: 1.05=
+em;">How to Use Diago to Diagnose CPU and Memory Usage in Go Programs</a></=
+span> =E2=80=94 Diago is a visualization tool that takes pprof output (prof=
+ile, heap) and displays them in a tree format in the=C2=A0terminal.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">R=
+=C3=A9my Mathieu </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+  <a target=3D"_blank" href=3D"https://golangweekly.com/link/85962/a1ec8ff3=
+b1" style=3D"text-decoration: none; color: #0099b4; border-bottom-width: 1p=
+x !important; border-bottom-color: #ddd !important; border-bottom-style: so=
+lid !important;"><img src=3D"https://copm.s3.amazonaws.com/6e41750b.png" wi=
+dth=3D"120" height=3D"120" style=3D"padding-top: 12px; padding-left: 12px; =
+outline: none; height: auto; text-decoration: none; max-width: 100%; line-h=
+eight: 100%; border: 0;" align=3D"right" alt=3D"" class=3D"som"></a>
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85962/a1ec8ff3b1" title=3D"www.enterprisedb.com" style=3D"text-=
+decoration: none; color: #0099b4; border-bottom-width: 1px !important; bord=
+er-bottom-color: #ddd !important; border-bottom-style: solid !important; fo=
+nt-size: 1.05em;">How to Use PostgreSQL Together with the Programming Langu=
+age Golang (Go)</a></span> =E2=80=94 Here are some step-by-step instruction=
+s on how to configure, connect and launch Go application with PostgreSQL. <=
+/p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">E=
+nterpriseDB <span style=3D"text-transform: uppercase; margin-left: 4px; fon=
+t-size: 0.9em; border-radius: 2px; background-color: #ffc; color: #885 !imp=
+ortant; padding: 1px 4px; border: 1px solid #dd9;" class=3D"tag-sponsor">sp=
+onsor</span></p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85963/a1ec8ff3b1" title=3D"medium.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">Announcing RxGo v2: Reactive Extensions for Go</a></span> =E2=80=94=
+ RxGo is a Go implementation of ReactiveX, making it akin to RxJS, etc. if =
+you want to write asynchronous programs oriented around streams of events/o=
+bservables, pipelines, etc. The <a href=3D"https://golangweekly.com/link/85=
+964/a1ec8ff3b1" style=3D"text-decoration: none; color: #0099b4; border-bott=
+om-width: 1px !important; border-bottom-color: #ddd !important; border-bott=
+om-style: solid !important;">=E2=80=98Getting Started=E2=80=99 docs</a> wil=
+l help clarify the ideas. <a href=3D"https://golangweekly.com/link/85965/a1=
+ec8ff3b1" style=3D"text-decoration: none; color: #0099b4; border-bottom-wid=
+th: 1px !important; border-bottom-color: #ddd !important; border-bottom-sty=
+le: solid !important;">GitHub=C2=A0repo.</a></p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">T=
+eiva Harsanyi </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85966/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">typex: Examine Go Type Structures, Interfaces and Transitive Depend=
+encies</a></span> =E2=80=94 In other words, print out a tree structure of G=
+o packages and their type structures and interfaces on the command=C2=A0lin=
+e.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">D=
+aniel T. Gorski </p>
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-headi=
+ng" style=3D"background-color: none !important; text-align: left; margin-to=
+p: 15px; color: #333333; mso-table-lspace: 0pt; mso-table-rspace: 0pt; bord=
+er-collapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMa=
+cSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso=
+-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; paddi=
+ng: 0;"><p style=3D"font-size: 1.6em !important; font-weight: 400 !importan=
+t; text-transform: none !important; line-height: 1.4em; display: inline-blo=
+ck; border-bottom-width: 6px; border-bottom-color: #f4f4f4; border-bottom-s=
+tyle: solid; margin: 0.5em 0;">=F0=9F=92=BB=C2=A0Jobs</p></td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85967/a1ec8ff3b1" title=3D"www.vettery.com" style=3D"text-decor=
+ation: none; color: #0099b4; border-bottom-width: 1px !important; border-bo=
+ttom-color: #ddd !important; border-bottom-style: solid !important; font-si=
+ze: 1.05em;">Find a Dev Job Through Vettery</a></span> =E2=80=94 Vettery is=
+ completely free for job seekers. Make a profile, name your salary, and con=
+nect with hiring managers from top employers.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">V=
+ettery </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85968/a1ec8ff3b1" title=3D"angel.co" style=3D"text-decoration: =
+none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-co=
+lor: #ddd !important; border-bottom-style: solid !important; font-size: 1.0=
+5em;">Enjoy Building Scalable Infrastructure in Go? Stream Is Hiring</a></s=
+pan> =E2=80=94 Like coding in Go? We do too. Stream is hiring in Amsterdam.=
+ <a href=3D"https://golangweekly.com/link/85968/a1ec8ff3b1" style=3D"text-d=
+ecoration: none; color: #0099b4; border-bottom-width: 1px !important; borde=
+r-bottom-color: #ddd !important; border-bottom-style: solid !important;">Ap=
+ply now</a>.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">S=
+tream </p>
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-headi=
+ng" style=3D"background-color: none !important; text-align: left; margin-to=
+p: 15px; color: #333333; mso-table-lspace: 0pt; mso-table-rspace: 0pt; bord=
+er-collapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMa=
+cSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso=
+-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; paddi=
+ng: 0;"><p style=3D"font-size: 1.6em !important; font-weight: 400 !importan=
+t; text-transform: none !important; line-height: 1.4em; display: inline-blo=
+ck; border-bottom-width: 6px; border-bottom-color: #f4f4f4; border-bottom-s=
+tyle: solid; margin: 0.5em 0;">=F0=9F=93=9A Articles &amp; Tutorials</p></t=
+d></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85969/a1ec8ff3b1" title=3D"pingcap.com" style=3D"text-decoratio=
+n: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom=
+-color: #ddd !important; border-bottom-style: solid !important; font-size: =
+1.05em;">Quickly Find Rust Program Bottlenecks Online Using a Go Tool</a></=
+span> =E2=80=94 So, the next time a Rustacean tells you how good Rust is, a=
+sk them to come find you when they need to find issues in their Rust app =
+=F0=9F=98=84</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">P=
+ingCAP </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85970/a1ec8ff3b1" title=3D"klotzandrew.com" style=3D"text-decor=
+ation: none; color: #0099b4; border-bottom-width: 1px !important; border-bo=
+ttom-color: #ddd !important; border-bottom-style: solid !important; font-si=
+ze: 1.05em;">Object Fingerprinting for Efficient Data Ingestion</a></span> =
+=E2=80=94 Using a custom JSON unmarshal function to build a hash for object=
+s that can be used for efficient comparison of already ingested=C2=A0object=
+s.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">A=
+ndrew Klotz </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85971/a1ec8ff3b1" title=3D"get.mux.com" style=3D"text-decoratio=
+n: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom=
+-color: #ddd !important; border-bottom-style: solid !important; font-size: =
+1.05em;">Video Streaming for Go</a></span> =E2=80=94 Build video for your a=
+pp that Just Works=E2=84=A2. Mux's Video API makes it super easy to build v=
+ideo or live streaming into=C2=A0any=C2=A0app.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">M=
+ux <span style=3D"text-transform: uppercase; margin-left: 4px; font-size: 0=
+.9em; border-radius: 2px; background-color: #ffc; color: #885 !important; p=
+adding: 1px 4px; border: 1px solid #dd9;" class=3D"tag-sponsor">sponsor</sp=
+an></p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85972/a1ec8ff3b1" title=3D"mohitkhare.me" style=3D"text-decorat=
+ion: none; color: #0099b4; border-bottom-width: 1px !important; border-bott=
+om-color: #ddd !important; border-bottom-style: solid !important; font-size=
+: 1.05em;">Working with Postgres Transactions in Go</a></span></p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">M=
+ohit Khare </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85973/a1ec8ff3b1" title=3D"www.theregister.co.uk" style=3D"text=
+-decoration: none; color: #0099b4; border-bottom-width: 1px !important; bor=
+der-bottom-color: #ddd !important; border-bottom-style: solid !important; f=
+ont-size: 1.05em;">How Does Monzo Keep 1,600 Microservices Spinning?</a></s=
+pan> =E2=80=94 Go only gets a brief mention here, but the entire tech stack=
+ might be a template for tackling complex distributed=C2=A0systems.</p>
+=20=20
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-headi=
+ng" style=3D"background-color: none !important; text-align: left; margin-to=
+p: 15px; color: #333333; mso-table-lspace: 0pt; mso-table-rspace: 0pt; bord=
+er-collapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMa=
+cSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso=
+-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; paddi=
+ng: 0;"><p style=3D"font-size: 1.6em !important; font-weight: 400 !importan=
+t; text-transform: none !important; line-height: 1.4em; display: inline-blo=
+ck; border-bottom-width: 6px; border-bottom-color: #f4f4f4; border-bottom-s=
+tyle: solid; margin: 0.5em 0;">=F0=9F=9B=A0 Code &amp; Tools</p></td></tr><=
+/table>
+<table width=3D"100%" class=3D"el-fullwidthimage" cellpadding=3D"0" cellspa=
+cing=3D"0" style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-co=
+llapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMacSyst=
+emFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso-tabl=
+e-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;">
+  <a href=3D"https://golangweekly.com/link/85974/a1ec8ff3b1" style=3D"text-=
+decoration: none; color: #0099b4;"><img src=3D"https://res.cloudinary.com/c=
+press/image/upload/w_1280,e_sharpen:60/nbamj6w3ekyl5ldu2gfv.jpg" alt=3D"" w=
+idth=3D"640" style=3D"outline: none; height: auto; text-decoration: none; m=
+ax-width: 100%; line-height: 100%; width: 100%; border: 0;"></a>
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"mso-tabl=
+e-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;"><tr><td s=
+tyle=3D"height: 4px; font-family: -apple-system,BlinkMacSystemFont,Helvetic=
+a,sans-serif; font-size: 15px; line-height: 1.55em; mso-table-lspace: 0pt; =
+mso-table-rspace: 0pt; border-collapse: collapse;"></td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85974/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">Gopher2600: An Atari VCS Emulator</a></span> =E2=80=94 A relatively=
+ feature-complete emulator that includes controller support and gameplay=C2=
+=A0recording.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">S=
+tephen Illingworth </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85975/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">ION: A Distributed Real-Time Communications (RTC) System</a></span>=
+ =E2=80=94 Powered by both Go and Flutter, ION supports WebRTC, as you=E2=
+=80=99d expect, as well as a few other protocols for video conferencing, li=
+ve streaming, etc.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">P=
+ion </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85976/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">lmdrouter: A Go HTTP Router for AWS API Gateway-Invoked Lambda Func=
+tions</a></span> =E2=80=94 A simple-to-use library for writing serverless f=
+unctions that work upon API Gateway proxy=C2=A0requests.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">A=
+qua Security </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85977/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">tube: A YouTube-like Video Sharing App</a></span> =E2=80=94 Want to=
+ deploy your own YouTube-esque site but running by your own rules? Worth a =
+try. Supports automatic transcoding to MP4 H.265 AAC, multiple collections =
+and RSS=C2=A0feeds.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">J=
+ames Mills </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85978/a1ec8ff3b1" title=3D"buildkite.com" style=3D"text-decorat=
+ion: none; color: #0099b4; border-bottom-width: 1px !important; border-bott=
+om-color: #ddd !important; border-bottom-style: solid !important; font-size=
+: 1.05em;">Faster CI/CD for All Your Software Projects Using Buildkite</a><=
+/span></p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">B=
+uildkite <span style=3D"text-transform: uppercase; margin-left: 4px; font-s=
+ize: 0.9em; border-radius: 2px; background-color: #ffc; color: #885 !import=
+ant; padding: 1px 4px; border: 1px solid #dd9;" class=3D"tag-sponsor">spons=
+or</span></p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85979/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">Logrus 1.5: A Feature Rich Structured Logger</a></span> =E2=80=94 S=
+upports JSON formatting, hooks (for sending certain log entries to external=
+ services, say), plus it=E2=80=99s API compatible with the standard library=
+=E2=80=99s logger too, so try dropping it=C2=A0in.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">S=
+imon Eskildsen </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85980/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">Gold: A Reinforcement Learning Library</a></span> =E2=80=94 Provide=
+s a set of agents that can be used to solve challenges in various=C2=A0envi=
+ronments.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">A=
+UNUM </p>
+</td></tr></table>
+
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-item =
+item  " style=3D"mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-colla=
+pse: collapse; margin-bottom: 4px;"><tr><td style=3D"font-family: -apple-sy=
+stem,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height:=
+ 1.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: col=
+lapse; padding: 0px 15px;">
+=20=20
+  <p class=3D"desc" style=3D"color: #444; margin-top: 0.8em; margin-bottom:=
+ 0; line-height: 1.65em;"><span style=3D"font-weight: 600; font-size: 1.2em=
+ !important; color: #000;" class=3D"mainlink"><a href=3D"https://golangweek=
+ly.com/link/85981/a1ec8ff3b1" title=3D"github.com" style=3D"text-decoration=
+: none; color: #0099b4; border-bottom-width: 1px !important; border-bottom-=
+color: #ddd !important; border-bottom-style: solid !important; font-size: 1=
+.05em;">Duit: A Simple Money Tracker, Built with Go and Mithril.js</a></spa=
+n> =E2=80=94 A complete, simple money tracking web=C2=A0app.</p>
+  <p class=3D"name" style=3D"color: #5a5a5a; margin-top: 4px; margin-bottom=
+: 0.8em; text-transform: uppercase; font-size: 12px; line-height: 1.2em;">R=
+adhi </p>
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"el-headi=
+ng" style=3D"background-color: none !important; text-align: left; margin-to=
+p: 15px; color: #333333; mso-table-lspace: 0pt; mso-table-rspace: 0pt; bord=
+er-collapse: collapse;"><tr><td style=3D"font-family: -apple-system,BlinkMa=
+cSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso=
+-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; paddi=
+ng: 0;"><p style=3D"font-size: 1.6em !important; font-weight: 400 !importan=
+t; text-transform: none !important; line-height: 1.4em; display: inline-blo=
+ck; border-bottom-width: 6px; border-bottom-color: #f4f4f4; border-bottom-s=
+tyle: solid; margin: 0.5em 0;">=F0=9F=92=8C A valuable message from Russ=C2=
+=A0Cox</p></td></tr></table>
+<!-- normal content section -->
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" class=3D"content =
+el-content " style=3D"color: #444; mso-table-lspace: 0pt; mso-table-rspace:=
+ 0pt; border-collapse: collapse;"><tr><td style=3D"font-family: -apple-syst=
+em,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1=
+.55em; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: colla=
+pse; padding: 0px 15px;">
+<p style=3D"margin-top: 0.8em; margin-bottom: 0.8em;">Over on the golang-de=
+v mailing list, Russ Cox posted <a href=3D"https://golangweekly.com/link/85=
+982/a1ec8ff3b1" style=3D"text-decoration: none; color: #0099b4; font-weight=
+: 600;">a valuable message</a>:</p>
+=20=20=20=20=20=20
+      <p style=3D"border-left-width: 4px; border-left-color: #66ccdd; borde=
+r-left-style: solid; padding-left: 15px; font-size: 0.9em; line-height: 1.5=
+em; color: #666666; margin-top: 0.8em; margin-bottom: 0.8em;">Go developmen=
+t is not isolated from world events; work on Go always comes second to more=
+ basic concerns like personal and family health and safety. Nearly all of u=
+s are working at reduced capacity these days. I expect that capacity to dro=
+p further over the next few months.<br>
+      <br>[...]<br>
+        <br>
+      If our own working capacity is reduced but we keep the same timelines=
+, then we must reduce the scope of what we expect to be in the release. Som=
+e new features or planned won't make it. That's OK - we'll get them next ti=
+me. We all need to accept that, for our own work and work by others.<br>
+        <br>Most of all, let's all please be extra kind and charitable with=
+ each other. It's always good advice to remember that you don't know what e=
+xternal stresses are affecting the person on the other end of the email, re=
+view thread, or GitHub comment, but it's especially important now.</p>
+=20=20=20=20
+   <p style=3D"margin-top: 0.8em; margin-bottom: 0.8em;">The above is just =
+a quick summary of the main points, but it's also <a href=3D"https://golang=
+weekly.com/link/85982/a1ec8ff3b1" style=3D"text-decoration: none; color: #0=
+099b4; font-weight: 600;">worth reading in full.</a> Thanks Russ.</p>
+</td></tr></table>
+<table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"mso-tabl=
+e-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;"><tr><td s=
+tyle=3D"height: 14px; font-family: -apple-system,BlinkMacSystemFont,Helveti=
+ca,sans-serif; font-size: 15px; line-height: 1.55em; mso-table-lspace: 0pt;=
+ mso-table-rspace: 0pt; border-collapse: collapse;"></td></tr></table>
+</div>
+  </td></tr>
+</table>
+<!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->
+<div id=3D"footer" class=3D"noarchive">
+      <table width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"bo=
+rder-top-width: 1px; border-top-color: #dddddd; border-top-style: solid; ms=
+o-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse;"><tr=
+><td style=3D"text-align: center; font-family: -apple-system,BlinkMacSystem=
+Font,Helvetica,sans-serif; font-size: 15px; line-height: 1.55em; mso-table-=
+lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; padding: 20p=
+x 15px;">
+      <p style=3D"font-size: 12px; line-height: 1.5em; margin-top: 0.8em; m=
+argin-bottom: 0.8em;">Curated by <a href=3D"https://golangweekly.com/link/8=
+5983/a1ec8ff3b1" style=3D"text-decoration: none; color: #0099b4;">Glenn Goo=
+drich</a> and <a href=3D"https://golangweekly.com/link/85984/a1ec8ff3b1" st=
+yle=3D"text-decoration: none; color: #0099b4;">Peter Cooper</a>.</p>
+      <p style=3D"font-size: 0.9em; margin-top: 0.8em; margin-bottom: 0.8em=
+;"><span class=3D"nomob"><a href=3D"https://golangweekly.com/edit_subscript=
+ion/a1ec8ff3b1" style=3D"text-decoration: underline; color: #0099b4;">Chang=
+e your email address</a> or </span><a href=3D"https://golangweekly.com/leav=
+e/a1ec8ff3b1" style=3D"text-decoration: underline; color: #0099b4;">Stop ge=
+tting this newsletter</a></p>
+      <p style=3D"font-size: 12px; margin-top: 0.8em; margin-bottom: 0.8em;=
+">=C2=A9 Cooper Press Ltd =C2=B7 Fairfield Enterprise Centre, Louth, LN11 0=
+LS, United Kingdom</p>
+      </td></tr></table>
+  </div>
+<img src=3D"https://golangweekly.com/open/305/a1ec8ff3b1" width=3D"1" heigh=
+t=3D"1" /></body>
+</html>
+
+--c7a57f2551204729737df6b8eba56acd2412e0ab22f0d748b256a5e876de--

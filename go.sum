@@ -5,6 +5,10 @@ github.com/DusanKasan/parsemail v0.0.0-20200228075709-6e5c9f904641 h1:WEDqn2ed1v
 github.com/DusanKasan/parsemail v0.0.0-20200228075709-6e5c9f904641/go.mod h1:X2gHR36ajhLdcOtFd638L5CutXdN/TDzppa7v2ckcK8=
 github.com/RTradeLtd/TxPB/v3 v3.2.0 h1:Ld2obhiuVCzJl1lMnbieVOg8pa95xkVtmg7vTd5LuzE=
 github.com/RTradeLtd/TxPB/v3 v3.2.0/go.mod h1:j0oH2gFOQ2pbOOXka7KMuri7PUMoiEtDWt0zUKSXe8I=
+github.com/RTradeLtd/TxPB/v3 v3.2.1 h1:3+sH2L8W8BQKvaex+fXqm20j1rcUQ4L5hAGuu1pnJ/k=
+github.com/RTradeLtd/TxPB/v3 v3.2.1/go.mod h1:j0oH2gFOQ2pbOOXka7KMuri7PUMoiEtDWt0zUKSXe8I=
+github.com/RTradeLtd/TxPB/v3 v3.2.2-rc1 h1:K1kLAKrUW+UJJJd2d5takSyW5AJLUoQsa/XuY3LKnx4=
+github.com/RTradeLtd/TxPB/v3 v3.2.2-rc1/go.mod h1:j0oH2gFOQ2pbOOXka7KMuri7PUMoiEtDWt0zUKSXe8I=
 github.com/RTradeLtd/go-libp2p-tls v0.2.2 h1:GhYeScb2CDCzTfxnGvnGmHbUy4N6fMj2fCekLm/a43E=
 github.com/RTradeLtd/go-libp2p-tls v0.2.2/go.mod h1:IRcUL004SnEu2eAA8amf7jxaimBeS9cKt9uq7jguzqs=
 github.com/RTradeLtd/go-temporalx-sdk v1.0.2 h1:O+B7hLdVHKGG7BOdilZZbzokFwo/AcdagpJP5Xo8j/g=
