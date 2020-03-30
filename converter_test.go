@@ -20,7 +20,7 @@ func getSamples(t *testing.T) []string {
 	fs := []string{}
 	for _, fh := range files {
 		if !fh.IsDir() {
-			fs = append(fs, fh.Name())
+			fs = append(fs, "samples/"+fh.Name())
 		}
 	}
 	return fs
