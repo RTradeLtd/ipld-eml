@@ -328,3 +328,52 @@ func (c *Converter) CalculateEmailSize(hashes ...string) (int64, error) {
 	}
 	return size, nil
 }
+
+func (c *Converter) CalculateChunkedEmailSize(hashes ...string) (int64, error) {
+	if len(hashes) == 0 {
+		return 0, errors.New("no hashes provided")
+	}
+	var fileHashes = make(map[string]bool)
+	var newHashes []string
+	for _, hash := range hashes {
+		chnk, err := c.GetChunkedEmail(hash)
+		if err != nil {
+			return 0, err
+		}
+		for _, chash := range chnk.GetParts() {
+			if !fileHashes[chash] {
+				fileHashes[chash] = true
+				newHashes = append(newHashes, chash)
+			}
+		}
+		em, err := c.GetEmailChunked(hash)
+		if err != nil {
+			return 0, err
+		}
+		for _, embed := range em.EmbeddedFiles {
+			if !fileHashes[embed.DataHash] {
+				fileHashes[embed.DataHash] = true
+				newHashes = append(newHashes, embed.DataHash)
+			}
+		}
+		for _, attach := range em.Attachments {
+			if !fileHashes[attach.DataHash] {
+				fileHashes[attach.DataHash] = true
+				newHashes = append(newHashes, attach.DataHash)
+			}
+		}
+	}
+	var size int64
+	hashes = append(hashes, newHashes...)
+	for _, hash := range hashes {
+		resp, err := c.xclient.Dag(c.ctx, &xpb.DagRequest{
+			RequestType: xpb.DAGREQTYPE_DAG_STAT,
+			Hash:        hash,
+		})
+		if err != nil {
+			return 0, err
+		}
+		size += resp.GetNodeStats()[hash].GetCumulativeSize()
+	}
+	return size, nil
+}

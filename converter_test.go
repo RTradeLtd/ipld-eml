@@ -8,7 +8,6 @@ import (
 	"os"
 	"testing"
 
-	pb "github.com/RTradeLtd/TxPB/v3/go"
 	"github.com/RTradeLtd/go-temporalx-sdk/client"
 	"github.com/gogo/protobuf/proto"
 )
@@ -106,26 +105,14 @@ func TestChunkSizeCalc(t *testing.T) {
 		}
 		hashes[i] = hash
 	}
-	var totalSize int64
-	for _, hash := range hashes {
-		ch, err := converter.GetChunkedEmail(hash)
-		if err != nil {
-			t.Fatal(err)
-		}
-		resp, err := cl.Blockstore(ctx, &pb.BlockstoreRequest{
-			RequestType: pb.BSREQTYPE_BS_GET_STATS,
-			Cids:        []string{hash},
-		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		for _, block := range resp.GetBlocks() {
-			totalSize += block.GetSize_()
-		}
-		for _, chash := range ch.GetParts() {
+	/*	for _, hash := range hashes {
+			ch, err := converter.GetChunkedEmail(hash)
+			if err != nil {
+				t.Fatal(err)
+			}
 			resp, err := cl.Blockstore(ctx, &pb.BlockstoreRequest{
 				RequestType: pb.BSREQTYPE_BS_GET_STATS,
-				Cids:        []string{chash},
+				Cids:        []string{hash},
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -133,9 +120,25 @@ func TestChunkSizeCalc(t *testing.T) {
 			for _, block := range resp.GetBlocks() {
 				totalSize += block.GetSize_()
 			}
+			for _, chash := range ch.GetParts() {
+				resp, err := cl.Blockstore(ctx, &pb.BlockstoreRequest{
+					RequestType: pb.BSREQTYPE_BS_GET_STATS,
+					Cids:        []string{chash},
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				for _, block := range resp.GetBlocks() {
+					totalSize += block.GetSize_()
+				}
+			}
 		}
+	*/
+	size, err := converter.CalculateChunkedEmailSize(hashes...)
+	if err != nil {
+		t.Fatal(err)
 	}
-	fmt.Println("total size of raw blocks: ", totalSize)
+	fmt.Println("total size of raw blocks: ", size)
 }
 
 func TestNonChunkSizeCalc(t *testing.T) {
