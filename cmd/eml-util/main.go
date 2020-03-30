@@ -22,14 +22,13 @@ func main() {
 			Aliases: []string{"gen-fake-emails", "gfe"},
 			Usage:   "generates fake emails to use for benchmarking",
 			Action: func(c *cli.Context) error {
-				if err := os.Mkdir(c.String("outdir"), os.ModePerm); !os.IsExist(err) {
-					return err
-				}
-				parts, err := analysis.GenerateMessages(c.Int("count"))
-				if err != nil {
-					return err
-				}
-				return analysis.WritePartsToDisk(parts, c.String("outdir"))
+				os.Mkdir(c.String("outdir"), os.ModePerm)
+				return analysis.GenerateMessages(
+					c.String("outdir"),
+					c.Int("email.count"),
+					c.Int("emoji.count"),
+					c.Int("paragraph.count"),
+				)
 			},
 			Flags: []cli.Flag{
 				&cli.StringFlag{
@@ -38,9 +37,19 @@ func main() {
 					Value: "outdir",
 				},
 				&cli.IntFlag{
-					Name:  "count",
+					Name:  "email.count",
 					Usage: "number of emails to generate",
 					Value: 100,
+				},
+				&cli.IntFlag{
+					Name:  "emoji.count",
+					Usage: "number of emojis to add in email",
+					Value: 100,
+				},
+				&cli.IntFlag{
+					Name:  "paragraph.count",
+					Usage: "number of paragraphs to generate",
+					Value: 10,
 				},
 			},
 		},

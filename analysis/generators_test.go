@@ -1,6 +1,8 @@
 package analysis
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -10,14 +12,15 @@ func TestGenerate(t *testing.T) {
 	t.Cleanup(func() {
 		os.RemoveAll(outdir)
 	})
-	messages, err := GenerateMessages(10)
+	if err := GenerateMessages(outdir, 10, 10, 10); err != nil {
+		t.Fatal(err)
+	}
+	files, err := ioutil.ReadDir(outdir)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(messages) != 10 {
-		t.Fatal("bad number of messages")
-	}
-	if err := WritePartsToDisk(messages, outdir); err != nil {
-		t.Fatal(err)
+	if len(files) != 10 {
+		fmt.Println(len(files))
+		t.Fatal("bad number of files")
 	}
 }

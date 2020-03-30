@@ -5,8 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
+	"math/rand"
 	"strings"
+
+	"image"
+	"image/color"
+	"image/png"
+	"os"
 
 	"github.com/brianvoe/gofakeit/v4"
 	"github.com/jhillyerd/enmime"
@@ -27,46 +32,41 @@ func init() {
 	gofakeit.Seed(0)
 }
 
-// WritePartsToDisk stores all emails on disk in mime format
-func WritePartsToDisk(parts []*enmime.Part, outdir string) error {
-	if err := os.Mkdir(outdir, os.ModeDir); !os.IsExist(err) {
-		return err
+// GenerateMessages is used to generate fake email messages and save to disk
+func GenerateMessages(outdir string, count, numEmojis, paragraphCount int) error {
+	os.MkdirAll(outdir, os.ModePerm)
+	addresses := GenerateFakeEmails(count)
+	if len(addresses) == 0 {
+		return errors.New("failed to generate addresses")
 	}
-	for i, part := range parts {
-		buf := bytes.NewBuffer(nil)
-		if err := part.Encode(buf); err != nil {
+	for i := 0; i < count; i++ {
+		part := GenerateMessage(fakes, GenOpts{To: addresses[i], EmojiCount: numEmojis, ParagraphCount: paragraphCount})
+		part.AddAttachment(genImage(), "image/png", fmt.Sprintf("image-%v.png", i))
+		email, err := part.Build()
+		if err != nil {
 			return err
 		}
-		ioutil.WriteFile(
+		buf := bytes.NewBuffer(nil)
+		if err := email.Encode(buf); err != nil {
+			return err
+		}
+		if err := ioutil.WriteFile(
 			fmt.Sprintf("%s/email-%v.eml", outdir, i),
 			buf.Bytes(),
 			os.FileMode(0642),
-		)
+		); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-// GenerateMessages is used to generate fake email messages
-func GenerateMessages(count int) ([]*enmime.Part, error) {
-	var emails = make([]*enmime.Part, count)
-	addresses := GenerateFakeEmails(count)
-	if len(addresses) == 0 {
-		return nil, errors.New("failed to generate addresses")
-	}
-	for i := 0; i < count; i++ {
-		part, err := GenerateMessage(fakes, GenOpts{To: addresses[i]}).Build()
-		if err != nil {
-			return nil, err
-		}
-		emails[i] = part
-	}
-	return emails, nil
-}
-
+// GenOpts is used to control generation of email messages
 type GenOpts struct {
 	To             string
 	ParagraphCount int
 	Signature      string
+	EmojiCount     int
 }
 
 // GenerateMessage uses faker to create a random message struct
@@ -75,13 +75,17 @@ func GenerateMessage(fake *faker.Faker, opts GenOpts) enmime.MailBuilder {
 	from := fake.Email()
 	company := fake.CompanyName()
 	// Plain text
-	cosig := fmt.Sprintf("%s <%s>, %s\r\n%s, \"%s\"",
+	cosig := fmt.Sprintf(
+		"%s <%s>, %s\r\n%s, \"%s\"\nheres a bunch of emojies %s\n%s",
 		fake.Name(),
 		from,
 		fake.JobTitle(),
 		company,
-		fake.CompanyCatchPhrase())
-	paragraphs := fake.Paragraphs(4, true)
+		fake.CompanyCatchPhrase(),
+		emojiSpam(opts.EmojiCount),
+		gofakeit.BS(),
+	)
+	paragraphs := fake.Paragraphs(opts.ParagraphCount, true)
 	textp := append(make([]string, 0), paragraphs...)
 	textp = append(textp, cosig)
 	/* TODO(bonedaddy): generate fake signature
@@ -112,6 +116,14 @@ func GenerateMessage(fake *faker.Faker, opts GenOpts) enmime.MailBuilder {
 		HTML([]byte("<p>" + strings.Join(htmlp, "</p>\r\n<p>") + "</p>"))
 }
 
+func emojiSpam(count int) string {
+	var spam string
+	for i := 0; i < count; i++ {
+		spam = fmt.Sprintf("%s-%s", spam, gofakeit.Emoji())
+	}
+	return spam
+}
+
 // GenerateFakeEmails is used to generate fake emai laddresses
 func GenerateFakeEmails(count int) []string {
 	var addresses = make([]string, count)
@@ -119,4 +131,16 @@ func GenerateFakeEmails(count int) []string {
 		addresses[i] = gofakeit.Email()
 	}
 	return addresses
+}
+
+func genImage() []byte {
+	buf := bytes.NewBuffer(nil)
+	img := image.NewRGBA(image.Rect(0, 0, 1920, 1080))
+
+	// Draw a red dot at (2, 3)
+	img.Set(2, 3, color.RGBA{uint8(rand.Int63n(255)), uint8(rand.Int63n(255)), uint8(rand.Int63n(255)), uint8(rand.Int63n(255))})
+	if err := png.Encode(buf, img); err != nil {
+		panic(err)
+	}
+	return buf.Bytes()
 }
