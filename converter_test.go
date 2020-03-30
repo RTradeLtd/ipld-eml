@@ -44,13 +44,17 @@ func TestConverterGenerated(t *testing.T) {
 		ListenAddress: listenAddress,
 		Insecure:      true,
 	})
-	defer cl.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer cl.Close()
 	converter := NewConverter(ctx, cl)
 	files := getSamples(t, "samples/generated")
-	for _, file := range files {
+	// only test 1000 since in CI this is taking forever
+	for i, file := range files {
+		if i >= 1000 {
+			break
+		}
 		func() {
 			fh, err := os.Open(file)
 			if err != nil {
@@ -103,10 +107,10 @@ func TestConverter(t *testing.T) {
 		ListenAddress: listenAddress,
 		Insecure:      true,
 	})
-	defer cl.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer cl.Close()
 	converter := NewConverter(ctx, cl)
 	files := getSamples(t, "samples")
 	for _, file := range files {
@@ -205,10 +209,10 @@ func TestNonChunkSizeCalc(t *testing.T) {
 		ListenAddress: listenAddress,
 		Insecure:      true,
 	})
-	defer cl.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer cl.Close()
 	converter := NewConverter(ctx, cl)
 	files := getSamples(t, "samples")
 	var hashes []string
