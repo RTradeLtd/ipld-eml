@@ -57,7 +57,7 @@ Size on disk is about 144MB and size on IPFS is about 133MB which gives us about
 
 The non-generated samples are intended to show-case a best case space savings about, when there is predominantly duplicated data. In the non-generated samples, the bulk of the data is composed of the same picture, meant to simulate a situation where the same photo (ex: cat picture) is sent to many different people. 
 
-The generated samples are inteded to show-case the "average/worst-case" space savings, when deduplication is largely derived the nature of content-addressing because there will occasionally be emails that have a small number of chunks that are shared by other emails, as opposed to the exact same image being sent to multiple different people, which leads to deduplication savings as you only need to store the image once.
+The generated samples are inteded to show-case the "average/worst-case" space savings, where the deduplication is largely derived from emails sharing a small subset of their total chunks due to the way content-addressing works, as opposed to savings from not having to store the same data/file once when that data composes most of the emails.
 
 | Sample Set | IPLD Format | Number Of Emails | IPFS Size | Disk Size | Space Savings | Scenario |
 |------------|-------------|------------------|-----------|-----------|---------------|----------|
