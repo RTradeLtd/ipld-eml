@@ -25,16 +25,20 @@ func init() {
 }
 
 // GenerateMessages is used to generate fake email messages
-func GenerateMessages(count int) ([]enmime.MailBuilder, error) {
-	var builders = make([]enmime.MailBuilder, count)
+func GenerateMessages(count int) ([]*enmime.Part, error) {
+	var emails = make([]*enmime.Part, count)
 	addresses := GenerateFakeEmails(count)
 	if len(addresses) == 0 {
 		return nil, errors.New("failed to generate addresses")
 	}
 	for i := 0; i < count; i++ {
-		builders[i] = GenerateMessage(fakes, GenOpts{To: addresses[i]})
+		part, err := GenerateMessage(fakes, GenOpts{To: addresses[i]}).Build()
+		if err != nil {
+			return nil, err
+		}
+		emails[i] = part
 	}
-	return builders, nil
+	return emails, nil
 }
 
 type GenOpts struct {
