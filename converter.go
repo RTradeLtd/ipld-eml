@@ -5,6 +5,8 @@ import (
 	"context"
 	"errors"
 	"io"
+	"io/ioutil"
+	"os"
 
 	"github.com/DusanKasan/parsemail"
 	xpb "github.com/RTradeLtd/TxPB/v3/go"
@@ -24,6 +26,37 @@ func NewConverter(ctx context.Context, xclient *client.Client) *Converter {
 		ctx:     ctx,
 		xclient: xclient,
 	}
+}
+
+// AddFromDirectory reads emails from the given directory, uploading them to ipfs
+func (c *Converter) AddFromDirectory(dir string) (map[string]string, error) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	var hashes = make(map[string]string, len(files))
+	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
+		hash, err := func() (string, error) {
+			fh, err := os.Open("dir" + "/" + f.Name())
+			if err != nil {
+				return "", err
+			}
+			defer fh.Close()
+			em, err := c.Convert(fh)
+			if err != nil {
+				return "", err
+			}
+			return c.PutEmail(em)
+		}()
+		if err != nil {
+			return nil, err
+		}
+		hashes[f.Name()] = hash
+	}
+	return hashes, nil
 }
 
 // GetEmail is a helper function to retrieve an email object
