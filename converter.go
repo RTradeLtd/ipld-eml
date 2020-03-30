@@ -292,7 +292,9 @@ func (c *Converter) CalculateEmailSize(printProgress bool, hashes ...string) (in
 			return 0, err
 		}
 		size += resp.GetNodeStats()[hash].GetCumulativeSize()
-		progress.Add(1)
+		if printProgress {
+			progress.Add(1)
+		}
 	}
 	return size, nil
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/brianvoe/gofakeit/v4"
 	"github.com/jhillyerd/enmime"
 	"github.com/manveru/faker"
+	"github.com/schollz/progressbar/v2"
 )
 
 var (
@@ -33,11 +34,16 @@ func init() {
 }
 
 // GenerateMessages is used to generate fake email messages and save to disk
-func GenerateMessages(outdir string, count, numEmojis, paragraphCount int) error {
+func GenerateMessages(outdir string, printProgress bool, count, numEmojis, paragraphCount int) error {
 	os.MkdirAll(outdir, os.ModePerm)
 	addresses := GenerateFakeEmails(count)
 	if len(addresses) == 0 {
 		return errors.New("failed to generate addresses")
+	}
+	var progress *progressbar.ProgressBar
+	if printProgress {
+		progress = progressbar.NewOptions64(int64(count), progressbar.OptionSetRenderBlankState(true))
+
 	}
 	for i := 0; i < count; i++ {
 		part := GenerateMessage(fakes, GenOpts{To: addresses[i], EmojiCount: numEmojis, ParagraphCount: paragraphCount})
@@ -56,6 +62,9 @@ func GenerateMessages(outdir string, count, numEmojis, paragraphCount int) error
 			os.FileMode(0642),
 		); err != nil {
 			return err
+		}
+		if printProgress {
+			progress.Add(1)
 		}
 	}
 	return nil

@@ -12,7 +12,7 @@ func TestGenerate(t *testing.T) {
 	t.Cleanup(func() {
 		os.RemoveAll(outdir)
 	})
-	if err := GenerateMessages(outdir, 10, 10, 10); err != nil {
+	if err := GenerateMessages(outdir, false, 10, 10, 10); err != nil {
 		t.Fatal(err)
 	}
 	files, err := ioutil.ReadDir(outdir)

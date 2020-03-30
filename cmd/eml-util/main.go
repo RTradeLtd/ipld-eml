@@ -168,6 +168,7 @@ input file is expected to a list of hashes **only**.
 				os.Mkdir(c.String("outdir"), os.ModePerm)
 				return analysis.GenerateMessages(
 					c.String("outdir"),
+					true,
 					c.Int("email.count"),
 					c.Int("emoji.count"),
 					c.Int("paragraph.count"),
